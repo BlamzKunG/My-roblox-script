@@ -1,9 +1,20 @@
+--[[
+    Ultimate Kill All – Single Button (Enhanced Loop)
+    สำหรับการศึกษาและทดสอบระบบป้องกันเท่านั้น
+    โค้ดนี้รวมทุกเทคนิคที่เป็นไปได้สำหรับ Kill All
+    และจะทำซ้ำจนกว่าตัวละครจะถูกทำลาย
+    **ห้ามนำไปใช้ในเกมหรือเซิร์ฟเวอร์ของผู้อื่นโดยไม่ได้รับอนุญาต**
+--]]
+
+---------------------------
+-- Services & Utilities
+---------------------------
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 local Workspace = game:GetService("Workspace")
 
--- ฟังก์ชัน deobfuscate สำหรับสร้างข้อความจากตัวเลข ASCII
+-- ฟังก์ชัน deobfuscate สำหรับสร้างข้อความจากตัวเลข ASCII (เพื่อซ่อนชื่อ Event)
 local function deobfuscate(arr)
     local str = ""
     for _, code in ipairs(arr) do
@@ -39,34 +50,42 @@ end
 local function killWithHealthZero(player)
     if player.Character and player.Character:FindFirstChild("Humanoid") then
         player.Character.Humanoid.Health = 0
-        print("[Health=0] ตั้งค่า Health เป็น 0 สำหรับ " .. player.Name)
+        print("[Health=0] ตั้ง Health เป็น 0 ให้ " .. player.Name)
     end
 end
 
 local function killWithTakeDamage(player)
     if player.Character and player.Character:FindFirstChild("Humanoid") then
-        player.Character.Humanoid:TakeDamage(math.huge)
+        pcall(function()
+            player.Character.Humanoid:TakeDamage(math.huge)
+        end)
         print("[TakeDamage] ใช้ TakeDamage ให้ " .. player.Name)
     end
 end
 
 local function killWithBreakJoints(player)
     if player.Character then
-        player.Character:BreakJoints()
+        pcall(function()
+            player.Character:BreakJoints()
+        end)
         print("[BreakJoints] ทำลาย joints ของ " .. player.Name)
     end
 end
 
 local function killWithChangeState(player)
     if player.Character and player.Character:FindFirstChild("Humanoid") then
-        player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Dead)
-        print("[ChangeState] เปลี่ยนสถานะเป็น Dead สำหรับ " .. player.Name)
+        pcall(function()
+            player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Dead)
+        end)
+        print("[ChangeState] เปลี่ยน state เป็น Dead สำหรับ " .. player.Name)
     end
 end
 
 local function killWithDestroyHumanoid(player)
     if player.Character and player.Character:FindFirstChild("Humanoid") then
-        player.Character.Humanoid:Destroy()
+        pcall(function()
+            player.Character.Humanoid:Destroy()
+        end)
         print("[DestroyHumanoid] ทำลาย Humanoid ของ " .. player.Name)
     end
 end
@@ -84,7 +103,9 @@ end
 
 local function killWithDestroyCharacter(player)
     if player.Character then
-        player.Character:Destroy()
+        pcall(function()
+            player.Character:Destroy()
+        end)
         print("[DestroyCharacter] ทำลาย Character ของ " .. player.Name)
     end
 end
@@ -94,19 +115,29 @@ end
 ---------------------------
 local function ultimateForceKill(player)
     if player == Players.LocalPlayer then return end
-    -- เรียกใช้ทุกวิธีพร้อมกัน (ใช้ spawn เพื่อให้ทำงานแบบขนาน)
-    spawn(function() killWithRemoteEvent(player) end)
-    spawn(function() killWithDamageEvent(player) end)
-    spawn(function() killWithHealthZero(player) end)
-    spawn(function() killWithTakeDamage(player) end)
-    spawn(function() killWithBreakJoints(player) end)
-    spawn(function() killWithChangeState(player) end)
-    spawn(function() killWithDestroyHumanoid(player) end)
-    spawn(function() killWithExplosion(player) end)
-    spawn(function() killWithDestroyCharacter(player) end)
+    local attempts = 0
+    -- ทำซ้ำจนกว่าตัวละครจะหายไปหรือถึงจำนวนความพยายามสูงสุด
+    while player.Character and player.Character.Parent and attempts < 5 do
+        attempts = attempts + 1
+        spawn(function() killWithRemoteEvent(player) end)
+        spawn(function() killWithDamageEvent(player) end)
+        spawn(function() killWithHealthZero(player) end)
+        spawn(function() killWithTakeDamage(player) end)
+        spawn(function() killWithBreakJoints(player) end)
+        spawn(function() killWithChangeState(player) end)
+        spawn(function() killWithDestroyHumanoid(player) end)
+        spawn(function() killWithExplosion(player) end)
+        spawn(function() killWithDestroyCharacter(player) end)
+        task.wait(0.5)
+    end
+    if not (player.Character and player.Character.Parent) then
+        print("Player " .. player.Name .. " ถูกทำลายเรียบร้อยใน " .. attempts .. " ครั้ง")
+    else
+        print("Player " .. player.Name .. " อาจมีการฟื้นฟูหรือป้องกันอยู่ (ลอง " .. attempts .. " ครั้ง)")
+    end
 end
 
--- Ultimate Kill All: ใช้ ultimateForceKill กับผู้เล่นทุกคน (ยกเว้น LocalPlayer)
+-- Ultimate Kill All: เรียกใช้ ultimateForceKill กับผู้เล่นทุกคน (ยกเว้น LocalPlayer)
 local function ultimateKillAll()
     for _, player in ipairs(Players:GetPlayers()) do
         if player ~= Players.LocalPlayer then
@@ -127,12 +158,12 @@ local button = Instance.new("TextButton")
 button.Name = "UltimateKillAllButton"
 button.Parent = screenGui
 button.Text = "Kill All"
-button.Size = UDim2.new(0, 200, 0, 50)
-button.Position = UDim2.new(0.5, -100, 0.8, 0)
+button.Size = UDim2.new(0, 220, 0, 60)
+button.Position = UDim2.new(0.5, -110, 0.8, 0)
 button.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 button.TextColor3 = Color3.fromRGB(255, 255, 255)
 button.Font = Enum.Font.SourceSansBold
-button.TextSize = 24
+button.TextSize = 28
 
 button.MouseEnter:Connect(function()
     button.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
