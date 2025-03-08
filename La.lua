@@ -1,76 +1,109 @@
+--[[ 
+    Advanced Kill All Script สำหรับการศึกษาและทดสอบระบบป้องกัน
+    หมายเหตุ: โค้ดนี้สร้างขึ้นเพื่อการศึกษาเท่านั้น
+    ห้ามนำไปใช้ในเกมหรือเซิร์ฟเวอร์ของผู้อื่นโดยไม่ได้รับอนุญาต
+--]]
+
+-- ดึงบริการที่จำเป็น
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
--- ฟังก์ชันออบฟัสชื่อ RemoteEvent ("KillEvent")
-local function _obfName()
-    local nums = {75, 105, 108, 108, 69, 118, 101, 110, 116}  -- ตัวเลข ASCII สำหรับ "KillEvent"
+-- ฟังก์ชันสำหรับสร้างข้อความจากตัวเลข ASCII (ใช้ในการออบฟัสชื่อ)
+local function deobfuscate(arr)
     local str = ""
-    for _, n in ipairs(nums) do
-        str = str .. string.char(n)
+    for _, code in ipairs(arr) do
+        str = str .. string.char(code)
     end
     return str
 end
 
-local _remoteName = _obfName()
+-- สร้างชื่อ RemoteEvent และ DamageEvent แบบออบฟัส
+local remoteName = deobfuscate({75, 105, 108, 108, 69, 118, 101, 110, 116})       -- "KillEvent"
+local damageName = deobfuscate({68, 97, 109, 97, 103, 101, 69, 118, 101, 110, 116})  -- "DamageEvent"
+
+-- ฟังก์ชันสร้าง delay แบบสุ่ม เพื่อเพิ่มความหลากหลายในการทำงาน
+local function randomDelay(min, max)
+    min = min or 0.5
+    max = max or 1.5
+    local delayTime = math.random() * (max - min) + min
+    task.wait(delayTime)
+end
 
 ---------------------------------------------------
--- Function 1: Kill All ผ่าน Remote Event
+-- Method 1: Advanced Kill All ผ่าน RemoteEvent
 ---------------------------------------------------
-local function killAllRemote()
-    local remoteEvent = ReplicatedStorage:FindFirstChild(_remoteName)
+local function advancedKillRemote()
+    local remoteEvent = ReplicatedStorage:FindFirstChild(remoteName)
     if remoteEvent then
-        for _, p in pairs(Players:GetPlayers()) do
-            if p ~= Players.LocalPlayer then  -- ไม่ยิงตัวเอง
-                remoteEvent:FireServer(p)
+        for _, player in ipairs(Players:GetPlayers()) do
+            if player ~= Players.LocalPlayer then  -- ข้ามตัว LocalPlayer
+                remoteEvent:FireServer(player)
+                print("[Remote] ส่งคำสั่งฆ่า " .. player.Name)
+                randomDelay(0.1, 0.3)
             end
         end
-        print("killAllRemote executed.")
     else
-        warn("ไม่พบ RemoteEvent: " .. _remoteName)
+        warn("ไม่พบ RemoteEvent: " .. remoteName)
     end
 end
 
 ---------------------------------------------------
--- Function 2: Kill All โดยปรับ Health ให้เป็น 0
+-- Method 2: Advanced Kill All โดยปรับค่า Health ให้เป็น 0
 ---------------------------------------------------
-local function killAllDirect()
-    for _, p in pairs(Players:GetPlayers()) do
-        if p ~= Players.LocalPlayer and p.Character and p.Character:FindFirstChild("Humanoid") then
-            p.Character.Humanoid.Health = 0
+local function advancedKillDirect()
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= Players.LocalPlayer and player.Character and player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid.Health = 0
+            print("[Direct] ลด Health เป็น 0 ให้ " .. player.Name)
+            randomDelay(0.1, 0.3)
         end
     end
-    print("killAllDirect executed.")
 end
 
 ---------------------------------------------------
--- Function 3: Kill All ผ่าน Damage Event (ถ้ามี)
+-- Method 3: Advanced Kill All ผ่าน DamageEvent (ถ้ามี)
 ---------------------------------------------------
-local function killAllDamage()
-    local damageEvent = ReplicatedStorage:FindFirstChild("DamageEvent")
+local function advancedKillDamage()
+    local damageEvent = ReplicatedStorage:FindFirstChild(damageName)
     if damageEvent then
-        for _, p in pairs(Players:GetPlayers()) do
-            if p ~= Players.LocalPlayer then
-                damageEvent:FireServer(p, 99999)  -- ส่งค่า Damage สูงเพื่อฆ่าผู้เล่น
+        for _, player in ipairs(Players:GetPlayers()) do
+            if player ~= Players.LocalPlayer then
+                -- ส่ง Damage จำนวนมหาศาลเพื่อให้แน่ใจว่าผู้เล่นจะตาย
+                damageEvent:FireServer(player, math.huge)
+                print("[Damage] ส่ง Damage สูงให้ " .. player.Name)
+                randomDelay(0.1, 0.3)
             end
         end
-        print("killAllDamage executed.")
     else
-        warn("ไม่พบ DamageEvent ใน ReplicatedStorage")
+        warn("ไม่พบ DamageEvent: " .. damageName)
     end
 end
 
 ---------------------------------------------------
--- การเรียกใช้งานอัตโนมัติ (ไม่ต้องกดปุ่ม)
+-- Main Function: Execute Advanced Kill All Methods
+-- สุ่มลำดับการทำงานของแต่ละวิธีเพื่อให้โค้ดมีความซับซ้อนมากขึ้น
 ---------------------------------------------------
-local function autoExecute()
-    local waitTime = 1  -- รอ 1 วินาทีเพื่อให้แน่ใจว่าข้อมูลโหลดครบ
-    task.wait(waitTime)
-    killAllRemote()
-    task.wait(waitTime)
-    killAllDirect()
-    task.wait(waitTime)
-    killAllDamage()
+local function advancedKillAll()
+    print("เริ่มต้นการรัน Advanced Kill All...")
+    local methods = {advancedKillRemote, advancedKillDirect, advancedKillDamage}
+    
+    -- สุ่มลำดับของ methods
+    for i = #methods, 2, -1 do
+        local j = math.random(i)
+        methods[i], methods[j] = methods[j], methods[i]
+    end
+    
+    -- เรียกใช้งานแต่ละวิธี
+    for _, method in ipairs(methods) do
+        method()
+        randomDelay(0.5, 1)
+    end
+    
+    print("Advanced Kill All ทำงานเสร็จสิ้น")
 end
 
--- เรียกใช้ฟังก์ชัน autoExecute เพื่อทดสอบ kill all ทุกแบบ
-autoExecute()
+---------------------------------------------------
+-- Auto Execute: รอให้ระบบโหลดก่อนแล้วเรียก Advanced Kill All
+---------------------------------------------------
+task.wait(2)
+advancedKillAll()
