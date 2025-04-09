@@ -1,12 +1,9 @@
--- ใส่ใน StarterPlayer > StarterPlayerScripts
-
 local Players = game:GetService("Players")
 local VirtualUser = game:GetService("VirtualUser")
 local RunService = game:GetService("RunService")
 local player = Players.LocalPlayer
 local camera = workspace.CurrentCamera
 
--- สร้าง UI
 local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
 gui.Name = "AntiAFK_GUI"
 gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -36,7 +33,6 @@ status.BackgroundTransparency = 1
 status.Font = Enum.Font.SourceSans
 status.TextSize = 20
 
--- Toggle button
 local toggleBtn = Instance.new("TextButton", gui)
 toggleBtn.Size = UDim2.new(0, 100, 0, 30)
 toggleBtn.Position = UDim2.new(0.5, -50, 1, -40)
@@ -47,14 +43,12 @@ toggleBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 toggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 toggleBtn.BorderSizePixel = 0
 
--- Toggle visibility
 local uiVisible = true
 toggleBtn.MouseButton1Click:Connect(function()
 	uiVisible = not uiVisible
 	frame.Visible = uiVisible
 end)
 
--- แผน A: VirtualUser จำลองคลิกเมื่อ AFK
 player.Idled:Connect(function()
 	VirtualUser:CaptureController()
 	VirtualUser:ClickButton2(Vector2.new())
@@ -64,7 +58,6 @@ player.Idled:Connect(function()
 	end)
 end)
 
--- แผน B: กล้องขยับเบา ๆ ทุก 60 วิ (เผื่อเกมไม่ detect VirtualUser)
 task.spawn(function()
 	local rotationAmount = math.rad(1)
 	local toggle = true
