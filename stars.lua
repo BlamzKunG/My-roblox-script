@@ -45,7 +45,7 @@ Tab:CreateToggle({
 })
 
 Tab:CreateToggle({
-	Name = "GodMode",
+	Name = "GodMode (BUG)",
 	CurrentValue = false,
 	Callback = function(Value)
         loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/GODMODE.lua"))()
