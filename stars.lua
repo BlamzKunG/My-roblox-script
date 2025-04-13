@@ -13,7 +13,7 @@ local Tab = Window:CreateTab("Main")
 
 Tab:CreateToggle({
         Name = "หัวใหญ่",
-	CurrentValue = false
+	CurrentValue = false,
         Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/HitboxExpand.lua"))()	
     end,    
@@ -21,7 +21,7 @@ Tab:CreateToggle({
 
 Tab:CreateToggle({
         Name = "หัวใหญ่ (เนียนๆมั้ง)",
-	CurrentValue = false
+	CurrentValue = false,
         Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/HitboxExpand-Mini.lua"))()	
     end,    
