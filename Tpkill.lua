@@ -1,46 +1,45 @@
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
 local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local HRP = Character:WaitForChild("HumanoidRootPart")
 
-local HEIGHT_OFFSET = 5
-local BACK_OFFSET = 5
+local radius = 5 -- รัศมีวงกลม
+local speed = 2 -- ความเร็วในการบินวน
 
--- หาตำแหน่งด้านหลังเป้าหมาย
-local function getFloatPosition(targetChar)
-	if targetChar and targetChar:FindFirstChild("HumanoidRootPart") then
-		local hrp = targetChar.HumanoidRootPart
-		local behindPos = hrp.Position - (hrp.CFrame.LookVector * BACK_OFFSET)
-		local floatPos = behindPos + Vector3.new(0, HEIGHT_OFFSET, 0)
-		return CFrame.new(floatPos, hrp.Position)
-	end
-end
+spawn(function()
+    while true do
+        -- หาเป้าหมายที่ยังมีชีวิต
+        local target = nil
+        for _, player in pairs(Players:GetPlayers()) do
+            if player ~= LocalPlayer then
+                local char = player.Character
+                if char and char:FindFirstChild("Humanoid") and char.Humanoid.Health > 0 then
+                    target = player
+                    break
+                end
+            end
+        end
 
--- หาเป้าหมายที่มีชีวิต
-local function getAliveTarget()
-	for _, player in pairs(Players:GetPlayers()) do
-		if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("Humanoid") then
-			if player.Character.Humanoid.Health > 0 then
-				return player.Character
-			end
-		end
-	end
-	return nil
-end
+        -- ถ้ามีเป้าหมาย
+        if target then
+            local angle = 0
+            -- วนจนกว่าเป้าหมายจะตาย
+            while target.Character and target.Character:FindFirstChild("Humanoid") and target.Character.Humanoid.Health > 0 do
+                if target.Character:FindFirstChild("HumanoidRootPart") then
+                    local targetPos = target.Character.HumanoidRootPart.Position
+                    angle = angle + speed * RunService.Heartbeat:Wait()
+                    local x = math.cos(angle) * radius
+                    local z = math.sin(angle) * radius
+                    local hoverPos = Vector3.new(x, 7, z) + targetPos
+                    HRP.CFrame = CFrame.new(hoverPos, targetPos) -- มองไปที่เป้าหมาย
+                else
+                    break
+                end
+            end
+        end
 
--- ลูปบินตามเป้าหมาย
-while true do
-	task.wait(0.1)
-
-	local targetChar = getAliveTarget()
-	local myChar = LocalPlayer.Character
-
-	if targetChar and myChar and myChar:FindFirstChild("HumanoidRootPart") then
-		local targetCFrame = getFloatPosition(targetChar)
-		if targetCFrame then
-			-- ปลด anchor ก่อนบิน
-			myChar.HumanoidRootPart.Anchored = false
-
-			-- ค่อย ๆ ย้ายตำแหน่งไปใกล้ตำแหน่งใหม่แบบ smooth
-			myChar:PivotTo(targetCFrame:Lerp(myChar:GetPivot(), 0.2))
-		end
-	end
-end
+        wait(0.5) -- เว้นจังหวะก่อนหาเป้าหมายใหม่
+    end
+end)
