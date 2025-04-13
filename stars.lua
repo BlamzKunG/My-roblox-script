@@ -45,10 +45,10 @@ Tab:CreateToggle({
 })
 
 Tab:CreateToggle({
-	Name = "GodMode (BUG)",
+	Name = "กระสุนแม่เหล็ก",
 	CurrentValue = false,
 	Callback = function(Value)
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/GODMODE.lua"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/MagneticBullets.lua"))()
     end,
         
 })
