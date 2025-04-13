@@ -31,7 +31,8 @@ Tab:CreateToggle({
 	Name = "บินเกาะหัว",
 	CurrentValue = false,
 	Callback = function(Value)
-        
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Hitboxfortpkill.lua"))()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Tpkill.lua"))()
     end,
 })
 
