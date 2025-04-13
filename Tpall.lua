@@ -9,33 +9,30 @@ RunService.RenderStepped:Connect(function()
     local myHRP = myChar:FindFirstChild("HumanoidRootPart")
     if not myHRP then return end
 
-    local basePos = myHRP.Position
-    local direction = myHRP.CFrame.LookVector.Unit
-    local baseOffset = direction * 10 -- << เพิ่มระยะห่างจาก 5 เป็น 10 studs
+    -- ตำแหน่งเป้าหมาย: ด้านหน้าเรา 10 Studs และสูงขึ้นเล็กน้อย
+    local basePos = myHRP.Position + myHRP.CFrame.LookVector * 10 + Vector3.new(0, 2, 0)
 
-    for i, player in pairs(Players:GetPlayers()) do
+    for _, player in pairs(Players:GetPlayers()) do
         if player ~= LocalPlayer and player.Character then
             local char = player.Character
 
-            -- ย้าย Head
+            -- วิธีที่ 1: ลากหัว (Hitbox)
             local head = char:FindFirstChild("Head")
             if head then
-                local spread = Vector3.new(math.cos(i) * 4, math.sin(i * 2) * 2, math.sin(i) * 4)
-                head.CFrame = CFrame.new(basePos + baseOffset + spread)
+                head.CFrame = CFrame.new(basePos + Vector3.new(math.random(-3,3), math.random(-1,1), math.random(-3,3)))
                 head.Velocity = Vector3.zero
                 head.RotVelocity = Vector3.zero
             end
 
-            -- สำรองด้วย HRP
+            -- วิธีที่ 2: ลาก HRP (เผื่อไว้)
             local hrp = char:FindFirstChild("HumanoidRootPart")
             if hrp then
-                local spread = Vector3.new(math.cos(i) * 4, 0, math.sin(i) * 4)
-                hrp.CFrame = CFrame.new(basePos + baseOffset + spread)
+                hrp.CFrame = CFrame.new(basePos + Vector3.new(math.random(-2,2), 0, math.random(-2,2)))
                 hrp.Velocity = Vector3.zero
                 hrp.RotVelocity = Vector3.zero
             end
 
-            -- ลดขนาดชิ้นส่วนร่างกายที่ไม่ใช่หัว
+            -- วิธีที่ 3: ย่อขนาดร่างกาย เหลือแต่หัว
             for _, part in pairs(char:GetDescendants()) do
                 if part:IsA("BasePart") and part.Name ~= "Head" then
                     part.Size = Vector3.new(0.1, 0.1, 0.1)
@@ -44,7 +41,7 @@ RunService.RenderStepped:Connect(function()
                 end
             end
 
-            -- หยุด animation
+            -- วิธีที่ 4: หยุดทุก Animation และการเคลื่อนไหว
             local hum = char:FindFirstChildOfClass("Humanoid")
             if hum then
                 for _, anim in pairs(hum:GetPlayingAnimationTracks()) do
