@@ -9,7 +9,7 @@ RunService.RenderStepped:Connect(function()
     local myHRP = myChar:FindFirstChild("HumanoidRootPart")
     if not myHRP then return end
 
-    local basePos = myHRP.Position + myHRP.CFrame.LookVector * 10 + Vector3.new(0, 2, 0)
+    local basePos = myHRP.Position + myHRP.CFrame.LookVector * 5 + Vector3.new(0, 2, 0)
 
     for _, player in pairs(Players:GetPlayers()) do
         if player ~= LocalPlayer and player.Character then
