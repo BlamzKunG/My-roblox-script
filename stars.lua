@@ -1,6 +1,5 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
-
 local Window = Rayfield:CreateWindow({
     Name = "PvH Control Panel",
     LoadingTitle = "Initializing",
@@ -10,12 +9,20 @@ local Window = Rayfield:CreateWindow({
     }
 })
 
-local Tab = Window:CreateTab("Main Tab", 4483362458)
-local Section = Tab:CreateSection("Main Controls")
+local Tab = Window:CreateTab("Main")
+local Section = Tab:CreateSection("Controls")
 
 Section:CreateButton({
-	Name = "Click Me",
-	Callback = function()
-		print("Hello from Rayfield!")
-	end,
+    Name = "Kill All",
+    Callback = function()
+        print("Killed All Players")
+    end,
+})
+
+Section:CreateToggle({
+    Name = "God Mode",
+    CurrentValue = false,
+    Callback = function(Value)
+        print("God Mode: ", Value)
+    end,
 })
