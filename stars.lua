@@ -42,27 +42,50 @@ Tab:CreateToggle({
 	CurrentValue = false,
 	Callback = function(Value)
         local Players = game:GetService("Players")
+        local RunService = game:GetService("RunService")
+        
         local LocalPlayer = Players.LocalPlayer
+        local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+        local HRP = Character:WaitForChild("HumanoidRootPart")
+        
+        local radius = 5 -- รัศมีวงกลม
+        local speed = 2 -- ความเร็วในการบินวน
         
         spawn(function()
             while true do
+                -- หาเป้าหมายที่ยังมีชีวิต
+                local target = nil
                 for _, player in pairs(Players:GetPlayers()) do
                     if player ~= LocalPlayer then
-                        local character = player.Character
-                        if character and character:FindFirstChild("Humanoid") and character.Humanoid.Health > 0 then
-                            if character:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                                -- วาร์ปห่างจากเป้าหมาย 3 studs ด้านหลัง
-                                local targetPos = character.HumanoidRootPart.Position
-                                local offset = Vector3.new(0, 5, 0) -- หรือเปลี่ยนเป็น Vector3.new(0, 5, 0) เพื่ออยู่บนหัว
-                                LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(targetPos + offset)
-                                wait(3) -- รอ 3 วิ ก่อน TP ไปหาคนต่อไป
-                            end
+                        local char = player.Character
+                        if char and char:FindFirstChild("Humanoid") and char.Humanoid.Health > 0 then
+                            target = player
+                            break
                         end
                     end
                 end
-                wait(0.5) -- ป้องกันแครช / ลดโหลด
+        
+                -- ถ้ามีเป้าหมาย
+                if target then
+                    local angle = 0
+                    -- วนจนกว่าเป้าหมายจะตาย
+                    while target.Character and target.Character:FindFirstChild("Humanoid") and target.Character.Humanoid.Health > 0 do
+                        if target.Character:FindFirstChild("HumanoidRootPart") then
+                            local targetPos = target.Character.HumanoidRootPart.Position
+                            angle = angle + speed * RunService.Heartbeat:Wait()
+                            local x = math.cos(angle) * radius
+                            local z = math.sin(angle) * radius
+                            local hoverPos = Vector3.new(x, 7, z) + targetPos
+                            HRP.CFrame = CFrame.new(hoverPos, targetPos) -- มองไปที่เป้าหมาย
+                        else
+                            break
+                        end
+                    end
+                end
+        
+                wait(0.5) -- เว้นจังหวะก่อนหาเป้าหมายใหม่
             end
-        end)
+        end)        
     end,
         
 })
