@@ -41,8 +41,30 @@ Tab:CreateToggle({
 	Name = "วาร์ปไปยิง",
 	CurrentValue = false,
 	Callback = function(Value)
-		print("God Mode:", Value)
-	end,
+        local Players = game:GetService("Players")
+        local LocalPlayer = Players.LocalPlayer
+        
+        spawn(function()
+            while true do
+                for _, player in pairs(Players:GetPlayers()) do
+                    if player ~= LocalPlayer then
+                        local character = player.Character
+                        if character and character:FindFirstChild("Humanoid") and character.Humanoid.Health > 0 then
+                            if character:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                                -- วาร์ปห่างจากเป้าหมาย 3 studs ด้านหลัง
+                                local targetPos = character.HumanoidRootPart.Position
+                                local offset = Vector3.new(0, 0, -3) -- หรือเปลี่ยนเป็น Vector3.new(0, 5, 0) เพื่ออยู่บนหัว
+                                LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(targetPos + offset)
+                                wait(2) -- รอ 1 วิ ก่อน TP ไปหาคนต่อไป
+                            end
+                        end
+                    end
+                end
+                wait(0.5) -- ป้องกันแครช / ลดโหลด
+            end
+        end)
+    end,
+        
 })
 
 Tab:CreateToggle({
