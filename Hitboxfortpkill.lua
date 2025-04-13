@@ -9,8 +9,8 @@ RunService.Stepped:Connect(function()
             if character and character:FindFirstChild("Head") then
                 local head = character.Head
 
-                if head.Size ~= Vector3.new(2, 10, 2) then
-                    head.Size = Vector3.new(2, 10, 2)
+                if head.Size ~= Vector3.new(10, 1, 10) then
+                    head.Size = Vector3.new(10, 1, 10)
                     head.Transparency = 0.7 -- มองเห็นราง ๆ
                     head.Color = Color3.fromRGB(255, 0, 0) -- สีแดง เพื่อให้เห็นเด่น
                     head.Material = Enum.Material.Neon -- สะท้อนแสงชัดขึ้น
