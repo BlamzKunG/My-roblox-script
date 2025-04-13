@@ -19,7 +19,7 @@ Tab:CreateToggle({
 })
 
 Tab:CreateToggle({
-	Name = "ดึงโหด😈😈",
+	Name = "ดึงโหด😈😈 (BUG)",
 	CurrentValue = false,
 	Callback = function(Value)
         local Players = game:GetService("Players")
