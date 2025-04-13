@@ -63,3 +63,12 @@ Tab2:CreateToggle({
     end,
         
 })
+
+Tab3:CreateToggle({
+	Name = "Reset Script",
+	CurrentValue = false,
+	Callback = function(Value)
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Reset.lua"))()
+    end,
+        
+})
