@@ -19,7 +19,7 @@ Tab:CreateToggle({
 })
 
 Tab:CreateToggle({
-	Name = "ดึงโหด😈😈 (Bug)",
+	Name = "ดึงโหด😈😈",
 	CurrentValue = false,
 	Callback = function(Value)
         loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Tpall.lua"))()
@@ -28,10 +28,10 @@ Tab:CreateToggle({
 })
 
 Tab:CreateToggle({
-	Name = "แช่คน (เห็นแค่เรา)",
+	Name = "กระสุนไม่จำกัด (ปิดใช้งาน)",
 	CurrentValue = false,
 	Callback = function(Value)
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/FrozenPlayer.lua"))()
+        
     end,
 })
 
