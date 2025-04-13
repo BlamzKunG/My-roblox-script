@@ -13,8 +13,8 @@ spawn(function()
                    targetChar:FindFirstChild("HumanoidRootPart") and
                    myChar:FindFirstChild("HumanoidRootPart") then
 
-                    -- ตำแหน่งที่ดึงมา (หน้าตัวเอง 3 studs)
-                    local front = myChar.HumanoidRootPart.CFrame.LookVector * 3
+                    -- ตำแหน่งที่ดึงมา (หน้าตัวเอง 5 studs)
+                    local front = myChar.HumanoidRootPart.CFrame.LookVector * 5
                     local newPos = myChar.HumanoidRootPart.Position + front
 
                     -- ดึงมา
