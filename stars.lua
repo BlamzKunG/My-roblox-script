@@ -28,7 +28,7 @@ Tab:CreateToggle({
 })
 
 Tab:CreateToggle({
-	Name = "แช่คน",
+	Name = "แช่คน (เห็นแค่เรา)",
 	CurrentValue = false,
 	Callback = function(Value)
         loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/FrozenPlayer.lua"))()
