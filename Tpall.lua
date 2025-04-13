@@ -1,30 +1,18 @@
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
+local RunService = game:GetService("RunService")
 
-spawn(function()
-    while true do
-        for _, player in pairs(Players:GetPlayers()) do
-            if player ~= LocalPlayer then
-                local targetChar = player.Character
-                local myChar = LocalPlayer.Character
+RunService.RenderStepped:Connect(function()
+    local myChar = LocalPlayer.Character
+    if not myChar or not myChar:FindFirstChild("HumanoidRootPart") then return end
+    local myPos = myChar.HumanoidRootPart.Position + Vector3.new(2, 0, 2) -- ห่างจากเรานิดนึง
 
-                if targetChar and myChar and
-                   targetChar:FindFirstChild("Humanoid") and targetChar.Humanoid.Health > 0 and
-                   targetChar:FindFirstChild("HumanoidRootPart") and
-                   myChar:FindFirstChild("HumanoidRootPart") then
-
-                    -- ตำแหน่งที่ดึงมา (หน้าตัวเอง 5 studs)
-                    local front = myChar.HumanoidRootPart.CFrame.LookVector * 5
-                    local newPos = myChar.HumanoidRootPart.Position + front
-
-                    -- ดึงมา
-                    targetChar.HumanoidRootPart.CFrame = CFrame.new(newPos)
-
-                    -- ทำซ้ำเฉพาะ 1 คนก่อน รอก่อนดึงคนอื่น
-                    wait(1)
-                end
-            end
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local targetHRP = player.Character.HumanoidRootPart
+            targetHRP.CFrame = CFrame.new(myPos + Vector3.new(math.random(-3,3), 0, math.random(-3,3)))
+            targetHRP.Velocity = Vector3.zero
+            targetHRP.RotVelocity = Vector3.zero
         end
-        wait(1)
     end
 end)
