@@ -1,39 +1,23 @@
--- ตัวแปรสำหรับหยุด Loop ทั้งหมด
-_G.StopAllScripts = true
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
 
--- รีเซ็ตตัวละครให้กลับสู่สภาพปกติ
-local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
+RunService.RenderStepped:Connect(function()
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character then
+            local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+            local head = player.Character:FindFirstChild("Head")
 
-for _, part in pairs(character:GetChildren()) do
-	if part:IsA("BasePart") then
-		part.Size = Vector3.new(2, 1, 1) -- ขนาดเริ่มต้น
-		part.Transparency = 0
-		part.CanCollide = true
-		part.Material = Enum.Material.Plastic
-	end
-end
-
--- คืนค่าชีวิตถ้ามีการปรับ
-local humanoid = character:FindFirstChildOfClass("Humanoid")
-if humanoid then
-	humanoid.Health = humanoid.MaxHealth
-end
-
--- คืน HumanoidRootPart ให้อยู่กับพื้น (ถ้าบินอยู่)
-local hrp = character:FindFirstChild("HumanoidRootPart")
-if hrp then
-	local ray = Ray.new(hrp.Position, Vector3.new(0, -500, 0))
-	local hit, pos = workspace:FindPartOnRay(ray, character)
-	if pos then
-		hrp.CFrame = CFrame.new(pos + Vector3.new(0, 5, 0)) -- ลอยจากพื้นนิดนึง
-	end
-end
-
--- แจ้งยืนยัน
-game.StarterGui:SetCore("ChatMakeSystemMessage", {
-	Text = "[SYSTEM] ทุก Script ถูกหยุดและรีเซ็ตเรียบร้อยแล้ว!",
-	Color = Color3.fromRGB(255, 0, 0),
-	Font = Enum.Font.SourceSansBold,
-	FontSize = Enum.FontSize.Size24
-})
+            if humanoid and head then
+                if humanoid.Health <= 0 then
+                    -- ลบ Hitbox หรือปรับขนาดกลับเหมือนเดิม
+                    if head.Size.Magnitude > Vector3.new(2,1,1).Magnitude then
+                        head.Size = Vector3.new(2, 1, 1)
+                        head.Transparency = 0
+                        head.CanCollide = true
+                    end
+                end
+            end
+        end
+    end
+end)
