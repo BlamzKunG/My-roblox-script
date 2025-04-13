@@ -1,15 +1,17 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "BlamzKunG",
-    LoadingTitle = "Initializing",
-    LoadingSubtitle = "Loading UI...",
+    Name = "เรื้อนดินน้ำมัน🥵",
+    LoadingTitle = "🤓☝🏻",
+    LoadingSubtitle = "กำลังดาวน์โหลด...",
     ConfigurationSaving = {
     Enabled = false,
     }
 })
 
 local Tab = Window:CreateTab("Main")
+local Tab2 = Window:CreateTab("Esp")
+local Tab3 = Window:CreateTab("Oher")
 
 Tab:CreateToggle({
         Name = "หัวใหญ่",
@@ -53,7 +55,7 @@ Tab:CreateToggle({
         
 })
 
-Tab:CreateToggle({
+Tab2:CreateToggle({
 	Name = "Esp",
 	CurrentValue = false,
 	Callback = function(Value)
