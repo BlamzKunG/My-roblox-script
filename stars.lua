@@ -1,19 +1,16 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
+
 local Window = Rayfield:CreateWindow({
-	Name = "Rayfield Demo",
-	LoadingTitle = "Rayfield UI",
-	LoadingSubtitle = "by Sirius",
-	ConfigurationSaving = {
-		Enabled = false,
-	},
-	Discord = {
-		Enabled = false,
-	},
-	KeySystem = false,
+    Name = "PvH Control Panel",
+    LoadingTitle = "Initializing",
+    LoadingSubtitle = "Loading UI...",
+    ConfigurationSaving = {
+        Enabled = false,
+    }
 })
 
-local Tab = Window:CreateTab("Main Tab", 4483362458) -- ชื่อแท็บ + ไอคอน (ImageId)
+local Tab = Window:CreateTab("Main Tab", 4483362458)
 local Section = Tab:CreateSection("Main Controls")
 
 Section:CreateButton({
