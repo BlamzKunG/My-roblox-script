@@ -3,52 +3,44 @@ local LocalPlayer = Players.LocalPlayer
 
 local HEIGHT_OFFSET = 5
 local BACK_OFFSET = 5
-local STAY_DURATION = 10
 
--- ฟังก์ชันพาเราไปอยู่เหนือหัว-ด้านหลังเป้าหมาย
-local function stayAboveTarget(targetChar)
-	local startTime = tick()
-
-	while tick() - startTime < STAY_DURATION do
-		if not targetChar or not targetChar:FindFirstChild("Humanoid") or not targetChar:FindFirstChild("HumanoidRootPart") then
-			break
-		end
-
-		local humanoid = targetChar:FindFirstChild("Humanoid")
-		local hrp = targetChar:FindFirstChild("HumanoidRootPart")
-
-		if humanoid.Health <= 0 then
-			break
-		end
-
-		-- คำนวณตำแหน่ง
+-- หาตำแหน่งด้านหลังเป้าหมาย
+local function getFloatPosition(targetChar)
+	if targetChar and targetChar:FindFirstChild("HumanoidRootPart") then
+		local hrp = targetChar.HumanoidRootPart
 		local behindPos = hrp.Position - (hrp.CFrame.LookVector * BACK_OFFSET)
 		local floatPos = behindPos + Vector3.new(0, HEIGHT_OFFSET, 0)
-
-		-- ย้ายตัวเราไปตำแหน่งนั้น และหันหน้าไปทางเป้าหมาย
-		if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-			LocalPlayer.Character:PivotTo(CFrame.new(floatPos, hrp.Position))
-		end
-
-		task.wait(0.2)
+		return CFrame.new(floatPos, hrp.Position)
 	end
 end
 
--- ลูปหาเป้าหมายใหม่ตลอด
-while true do
-	task.wait(0.5)
-
-	local myChar = LocalPlayer.Character
-	if not myChar or not myChar:FindFirstChild("HumanoidRootPart") then continue end
-
+-- หาเป้าหมายที่มีชีวิต
+local function getAliveTarget()
 	for _, player in pairs(Players:GetPlayers()) do
 		if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("Humanoid") then
-			local targetHum = player.Character.Humanoid
-
-			if targetHum.Health > 0 then
-				stayAboveTarget(player.Character)
-				break
+			if player.Character.Humanoid.Health > 0 then
+				return player.Character
 			end
+		end
+	end
+	return nil
+end
+
+-- ลูปบินตามเป้าหมาย
+while true do
+	task.wait(0.1)
+
+	local targetChar = getAliveTarget()
+	local myChar = LocalPlayer.Character
+
+	if targetChar and myChar and myChar:FindFirstChild("HumanoidRootPart") then
+		local targetCFrame = getFloatPosition(targetChar)
+		if targetCFrame then
+			-- ปลด anchor ก่อนบิน
+			myChar.HumanoidRootPart.Anchored = false
+
+			-- ค่อย ๆ ย้ายตำแหน่งไปใกล้ตำแหน่งใหม่แบบ smooth
+			myChar:PivotTo(targetCFrame:Lerp(myChar:GetPivot(), 0.2))
 		end
 	end
 end
