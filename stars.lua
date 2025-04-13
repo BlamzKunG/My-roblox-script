@@ -10,19 +10,18 @@ local Window = Rayfield:CreateWindow({
 })
 
 local Tab = Window:CreateTab("Main")
-local Section = Tab:CreateSection("Controls")
 
-Section:CreateButton({
-    Name = "Kill All",
-    Callback = function()
-        print("Killed All Players")
-    end,
+Tab:CreateButton({
+	Name = "Click Me",
+	Callback = function()
+		print("Hello from Rayfield!")
+	end,
 })
 
-Section:CreateToggle({
-    Name = "God Mode",
-    CurrentValue = false,
-    Callback = function(Value)
-        print("God Mode: ", Value)
-    end,
+Tab:CreateToggle({
+	Name = "God Mode",
+	CurrentValue = false,
+	Callback = function(Value)
+		print("God Mode:", Value)
+	end,
 })
