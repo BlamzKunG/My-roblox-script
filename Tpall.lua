@@ -5,7 +5,7 @@ local LocalPlayer = Players.LocalPlayer
 RunService.RenderStepped:Connect(function()
         if head then
     head.Anchored = true
-    head.Size = Vector3.new(8, 8, 8) -- ขยายขนาดหัวแบบพอเหมาะ
+    head.Size = Vector3.new(3, 8, 3) -- ขยายขนาดหัวแบบพอเหมาะ
     head.Transparency = 0.7         -- เห็นราง ๆ พอเล็ง
     head.CanCollide = false
     head.Material = Enum.Material.ForceField -- ดูเหมือนเอฟเฟกต์พิเศษ
