@@ -5,7 +5,7 @@ local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local HRP = Character:WaitForChild("HumanoidRootPart")
 
-local radius = 7 -- รัศมีวงกลม
+local radius = 15 -- รัศมีวงกลม
 local speed = 10 -- ความเร็วในการบินวน
 
 spawn(function()
@@ -32,7 +32,7 @@ spawn(function()
                     angle = angle + speed * RunService.Heartbeat:Wait()
                     local x = math.cos(angle) * radius
                     local z = math.sin(angle) * radius
-                    local hoverPos = Vector3.new(x, 15, z) + targetPos
+                    local hoverPos = Vector3.new(x, 25, z) + targetPos
                     HRP.CFrame = CFrame.new(hoverPos, targetPos) -- มองไปที่เป้าหมาย
                 else
                     break
