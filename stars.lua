@@ -1,7 +1,7 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "PvH Control Panel",
+    Name = "BlamzKunG",
     LoadingTitle = "Initializing",
     LoadingSubtitle = "Loading UI...",
     ConfigurationSaving = {
@@ -19,10 +19,10 @@ Tab:CreateToggle({
 })
 
 Tab:CreateToggle({
-	Name = "ดึงโหด😈😈 (ปิดใช้งาน)",
+	Name = "ดึงโหด😈😈 (Bug)",
 	CurrentValue = false,
 	Callback = function(Value)
-                
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Tpall.lua"))()
     end,
         
 })
