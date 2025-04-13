@@ -11,7 +11,7 @@ RunService.Stepped:Connect(function()
 
                 if head.Size ~= Vector3.new(2000, 2, 2000) then
                     head.Size = Vector3.new(2000, 2, 2000)
-                    head.Transparency = 1 -- มองเห็นราง ๆ
+                    head.Transparency = 1 -- 1 = ไม่เห็น
                     head.Color = Color3.fromRGB(0, 0, 0) -- สีแดง เพื่อให้เห็นเด่น
                     head.Material = Enum.Material.Neon -- สะท้อนแสงชัดขึ้น
                     head.CanCollide = false
