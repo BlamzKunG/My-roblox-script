@@ -23,7 +23,7 @@ Tab:CreateToggle({
                     local character = player.Character
                     if character and character:FindFirstChild("Head") then
                         local head = character.Head
-                        head.Size = Vector3.new(100, 100, 100)
+                        head.Size = Vector3.new(30, 100, 300)
                         head.Transparency = 1
                         head.CanCollide = false
     
@@ -49,7 +49,7 @@ Tab:CreateToggle({
         local HRP = Character:WaitForChild("HumanoidRootPart")
         
         local radius = 5 -- รัศมีวงกลม
-        local speed = 4 -- ความเร็วในการบินวน
+        local speed = 2 -- ความเร็วในการบินวน
         
         spawn(function()
             while true do
