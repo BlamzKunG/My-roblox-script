@@ -13,8 +13,7 @@ local Tab = Window:CreateTab("Main")
 
 Tab:CreateToggle({
         Name = "หัวใหญ่",
-	CurrentValue = false,
-        Callback = function(Value)
+        Callback = function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/HitboxExpand.lua"))()	
     end,    
 })
