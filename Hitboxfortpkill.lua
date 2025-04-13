@@ -17,7 +17,7 @@ RunService.Stepped:Connect(function()
                     head.CanCollide = false
                     head.Massless = true
 
-                    -- ป้องกันหัวลอยหลุด --pls
+                    -- ป้องกันหัวลอยหลุด --pls no lag byw
                     local weld = Instance.new("WeldConstraint")
                     weld.Part0 = head
                     weld.Part1 = character:FindFirstChild("UpperTorso") or character:FindFirstChild("Torso") or head
