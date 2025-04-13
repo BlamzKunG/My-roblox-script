@@ -1,4 +1,4 @@
-local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/jensonhirst/Rayfield/refs/heads/main/source"))()
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
     Name = "PvH Control Panel",
