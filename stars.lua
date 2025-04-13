@@ -23,7 +23,7 @@ Tab:CreateToggle({
                     local character = player.Character
                     if character and character:FindFirstChild("Head") then
                         local head = character.Head
-                        head.Size = Vector3.new(10, 10, 10)
+                        head.Size = Vector3.new(20, 20, 20)
                         head.Transparency = 1
                         head.CanCollide = false
     
@@ -53,9 +53,9 @@ Tab:CreateToggle({
                             if character:FindFirstChild("HumanoidRootPart") and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
                                 -- วาร์ปห่างจากเป้าหมาย 3 studs ด้านหลัง
                                 local targetPos = character.HumanoidRootPart.Position
-                                local offset = Vector3.new(0, 0, -3) -- หรือเปลี่ยนเป็น Vector3.new(0, 5, 0) เพื่ออยู่บนหัว
+                                local offset = Vector3.new(0, 5, 0) -- หรือเปลี่ยนเป็น Vector3.new(0, 5, 0) เพื่ออยู่บนหัว
                                 LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(targetPos + offset)
-                                wait(2) -- รอ 1 วิ ก่อน TP ไปหาคนต่อไป
+                                wait(3) -- รอ 3 วิ ก่อน TP ไปหาคนต่อไป
                             end
                         end
                     end
