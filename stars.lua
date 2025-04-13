@@ -28,7 +28,7 @@ Tab:CreateToggle({
 })
 
 Tab:CreateToggle({
-	Name = "กระสุนไม่จำกัด (ปิดใช้งาน)",
+	Name = "บินเกาะหัว",
 	CurrentValue = false,
 	Callback = function(Value)
         
