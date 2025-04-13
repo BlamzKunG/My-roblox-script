@@ -1,37 +1,28 @@
-local Origin = loadstring(game:HttpGet("https://raw.githubusercontent.com/OriginHub/OriginUILibrary/main/Library.lua"))()
+local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/shlexware/Rayfield/main/source"))()
 
-local Window = Origin:CreateWindow({
-    Name = "My Origin UI", -- ชื่อ UI
-    LoadingTitle = "Loading...", -- ชื่อเวลารัน
-    LoadingSubtitle = "Please wait", -- ข้อความใต้ชื่อ
+local Window = Rayfield:CreateWindow({
+    Name = "PvH Control Panel",
+    LoadingTitle = "Initializing",
+    LoadingSubtitle = "Loading UI...",
     ConfigurationSaving = {
-        Enabled = false, -- ปิดระบบ save config ไว้ก่อน
-    },
-    Discord = {
         Enabled = false,
-    },
-    KeySystem = false, -- ปิดระบบใส่ Key
+    }
 })
 
--- สร้างแท็บ
-local Tab = Window:CreateTab("Main", 4483362458) -- ชื่อ Tab + รูป icon จาก id
+local Tab = Window:CreateTab("Main")
+local Section = Tab:CreateSection("Controls")
 
--- สร้าง Section
-local Section = Tab:CreateSection("Main Functions")
-
--- สร้างปุ่ม
-Section:AddButton({
-    Name = "Click me",
+Section:CreateButton({
+    Name = "Kill All",
     Callback = function()
-        print("You clicked the button!")
+        print("Killed All Players")
     end,
 })
 
--- สร้าง Toggle
-Section:AddToggle({
-    Name = "Enable Something",
-    Default = false,
+Section:CreateToggle({
+    Name = "God Mode",
+    CurrentValue = false,
     Callback = function(Value)
-        print("Toggle is now:", Value)
+        print("God Mode: ", Value)
     end,
 })
