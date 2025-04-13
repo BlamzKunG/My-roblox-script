@@ -32,7 +32,8 @@ Tab:CreateToggle({
 	CurrentValue = false,
 	Callback = function(Value)
         loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/FrozenPlayer.lua"))()
-	end,
+    end,
+})
 
 Tab:CreateToggle({
 	Name = "Esp",
