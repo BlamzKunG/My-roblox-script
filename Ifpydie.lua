@@ -2,7 +2,7 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
 -- ลิงก์ GitHub ที่เป็น RAW
-local githubURL = "https://raw.githubusercontent.com/YourUserName/YourRepo/main/script.lua"
+local githubURL = "https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/KillForAutoFarm.lua"
 
 local function loadFromGitHub()
     local success, result = pcall(function()
