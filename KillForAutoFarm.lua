@@ -5,8 +5,8 @@ local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local HRP = Character:WaitForChild("HumanoidRootPart")
 
-local radius = 30 -- รัศมีวงกลม
-local speed = 15 -- ความเร็วในการบินวน
+local radius = 40 -- รัศมีวงกลม
+local speed = 10 -- ความเร็วในการบินวน
 
 spawn(function()
     while true do
