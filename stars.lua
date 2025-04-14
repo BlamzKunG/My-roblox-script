@@ -33,16 +33,24 @@ Tab:CreateToggle({
         CurrentValue = false,
         Callback = function(Value)
         loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Tpall.lua"))()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Hitboxfortpkill.lua"))()
     end,        
 })
 
 Tab:CreateToggle({
-	Name = "บินเกาะหัว",
+	Name = "วาร์ปไปยิง",
 	CurrentValue = false,
 	Callback = function(Value)
         loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Hitboxfortpkill.lua"))()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Tpkill.lua"))()
+    end,
+})
+
+Tab:CreateToggle({
+	Name = "บินไปยิง",
+	CurrentValue = false,
+	Callback = function(Value)
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Hitboxfortpkill.lua"))()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Flytokill.lua"))()
     end,
 })
 
