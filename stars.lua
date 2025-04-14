@@ -30,10 +30,11 @@ Tab:CreateToggle({
 })
 
 Tab:CreateToggle({
-        Name = "ดึงโหด😈😈",
+        Name = "ดึงโหด😈😈 + Rejoin",
         CurrentValue = false,
         Callback = function(Value)
         loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Tpall.lua"))()
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/AutoRejoin.lua"))()
     end,        
 })
 
