@@ -11,7 +11,8 @@ local Window = Rayfield:CreateWindow({
 
 local Tab = Window:CreateTab("Main")
 local Tab2 = Window:CreateTab("Esp")
-local Tab3 = Window:CreateTab("Oher")
+local Tab3 = Window:CreateTab("Auto Farm")
+local Tab4 = Window:CreateTab("Oher")
 
 Tab:CreateToggle({
         Name = "หัวใหญ่",
@@ -73,6 +74,18 @@ Tab2:CreateToggle({
 })
 
 Tab3:CreateToggle({
+	Name = "Auto Farm",
+	CurrentValue = false,
+	Callback = function(Value)
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Tpkill.lua"))()
+	loadstring(game:HttpGet(""))()
+	loadstring(game:HttpGet(""))()
+	loadstring(game:HttpGet(""))()
+    end,
+        
+})
+
+Tab4:CreateToggle({
 	Name = "Reset Script",
 	CurrentValue = false,
 	Callback = function(Value)
