@@ -60,6 +60,6 @@ local function fireSilent()
 end
 
 -- ยิงทุก 0.2 วิ
-while task.wait(0.2) do
+while task.wait(0.1) do
     fireSilent()
 end
