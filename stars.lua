@@ -30,6 +30,14 @@ Tab:CreateToggle({
 })
 
 Tab:CreateToggle({
+        Name = "Kill All",
+	CurrentValue = false,
+        Callback = function(Value)
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/KA.lua"))()	
+    end,    
+})
+
+Tab:CreateToggle({
         Name = "ดึงโหด😈😈 + Rejoin",
         CurrentValue = false,
         Callback = function(Value)
