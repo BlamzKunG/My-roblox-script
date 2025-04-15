@@ -50,7 +50,7 @@ RunService.RenderStepped:Connect(function()
     local targetHead = targetPlayer.Character:FindFirstChild("Head")
     if not targetHead then return end
 
-    local desiredPos = targetHead.Position + Vector3.new(0, 3, 0)
+    local desiredPos = targetHead.Position + Vector3.new(0, 0, 0)
     local currentPos = myHRP.Position
     local newPos = currentPos:Lerp(desiredPos, 0.08)
 
