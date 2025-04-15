@@ -30,14 +30,6 @@ Tab:CreateToggle({
 })
 
 Tab:CreateToggle({
-        Name = "Kill All",
-	CurrentValue = false,
-        Callback = function(Value)
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/KA.lua"))()	
-    end,    
-})
-
-Tab:CreateToggle({
         Name = "ดึงโหด😈😈 + Rejoin",
         CurrentValue = false,
         Callback = function(Value)
@@ -111,6 +103,22 @@ Tab3:CreateToggle({
 	Callback = function(Value)
         loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Aff.lua"))()
     end,
+})
+
+Tab3:CreateToggle({
+        Name = "KillAll(เทพ)",
+	CurrentValue = false,
+        Callback = function(Value)
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/KA.lua"))()	
+    end,    
+})
+
+Tab3:CreateToggle({
+        Name = "Kill All(โอกาสโดนเตะน้อย)",
+	CurrentValue = false,
+        Callback = function(Value)
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Ka1t.lua"))()	
+    end,    
 })
 
 Tab4:CreateToggle({
