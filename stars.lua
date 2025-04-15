@@ -59,7 +59,7 @@ Tab:CreateToggle({
 	Name = "บินไปยิง",
 	CurrentValue = false,
 	Callback = function(Value)
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Hitboxfortpkill.lua"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Flytokill.lua"))()
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Ka1t.lua"))()
     end,
 })
