@@ -30,11 +30,11 @@ Tab:CreateToggle({
 })
 
 Tab:CreateToggle({
-        Name = "ดึงโหด😈😈 + Rejoin",
+        Name = "ดึงโหด😈😈",
         CurrentValue = false,
         Callback = function(Value)
         loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Tpall.lua"))()
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/AutoRejoin.lua"))()
+	--loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/AutoRejoin.lua"))()
     end,        
 })
 
@@ -122,9 +122,9 @@ Tab3:CreateToggle({
 })
 
 Tab4:CreateToggle({
-	Name = "Reset Script",
+	Name = "Auto Rejoin",
 	CurrentValue = false,
 	Callback = function(Value)
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Reset.lua"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/AutoRejoin.lua"))()
     end,
 })
