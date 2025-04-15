@@ -66,12 +66,27 @@ Tab:CreateToggle({
 })
 
 Tab2:CreateToggle({
-	Name = "Esp",
+	Name = "Esp Name",
 	CurrentValue = false,
 	Callback = function(Value)
         loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Esp.lua"))()
     end,
-        
+})
+
+Tab2:CreateToggle({
+	Name = "Skeleton Esp",
+	CurrentValue = false,
+	Callback = function(Value)
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/EspSk.lua"))()
+    end,
+})
+
+Tab2:CreateToggle({
+	Name = "Tracers ESP",
+	CurrentValue = false,
+	Callback = function(Value)
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/EstT.lua"))()
+    end,
 })
 
 Tab3:CreateToggle({
@@ -80,7 +95,6 @@ Tab3:CreateToggle({
 	Callback = function(Value)
         loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Aff.lua"))()
     end,
-        
 })
 
 Tab4:CreateToggle({
@@ -89,5 +103,4 @@ Tab4:CreateToggle({
 	Callback = function(Value)
         loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Reset.lua"))()
     end,
-        
 })
