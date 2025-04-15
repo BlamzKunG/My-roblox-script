@@ -89,6 +89,14 @@ Tab2:CreateToggle({
     end,
 })
 
+Tab2:CreateToggle({
+	Name = "Box ESP",
+	CurrentValue = false,
+	Callback = function(Value)
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/EspBox.lua"))()
+    end,
+})
+
 Tab3:CreateToggle({
 	Name = "Auto Farm",
 	CurrentValue = false,
