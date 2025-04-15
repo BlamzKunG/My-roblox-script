@@ -1,9 +1,12 @@
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
+local Workspace = game:GetService("Workspace")
 
 local LocalPlayer = Players.LocalPlayer
 local myChar = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
 local myHRP = myChar:WaitForChild("HumanoidRootPart")
+
+local camera = Workspace.CurrentCamera
 
 local targetPlayer = nil
 local playerList = {}
@@ -34,7 +37,7 @@ local function switchTarget()
     targetPlayer = playerList[targetIndex]
 end
 
--- ลอยบนหัวเป้าหมาย
+-- ลอยบนหัวเป้าหมาย + หันกล้องไปที่เป้าหมาย
 RunService.RenderStepped:Connect(function()
     if not myHRP then return end
 
@@ -57,4 +60,7 @@ RunService.RenderStepped:Connect(function()
     myHRP.Velocity = Vector3.zero
     myHRP.RotVelocity = Vector3.zero
     myHRP.CFrame = CFrame.new(newPos)
+
+    -- หันกล้องไปยังหัวเป้าหมาย
+    camera.CFrame = CFrame.new(camera.CFrame.Position, targetHead.Position)
 end)
