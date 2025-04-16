@@ -2,17 +2,16 @@ local DrRayLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/
 local window = DrRayLibrary:Load("Lxxuak Hub", "Default")
 
 local tab = DrRayLibrary.newTab("Main", "ImageIdHere")
-local tab2 = DrRayLibrary.newTab("Esp", "ImageIdHere")
+local tab2 = DrRayLibrary.newTab("Auto Farm", "ImageIdHere")
 
-tab.newToggle("Kill All", "Kill All", false, function(toggleState)
+tab.newToggle("Fast Attack", "Fast Attack", false, function(toggleState)
+    getgenv().FastAttack = toggleState
     if toggleState then
-        print("On")
-    else
-        print("Off")
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Fat"))()
     end
 end)
 
-tab2.newToggle("Esp", "Esp", false, function(toggleState)
+tab2.newToggle("Auto Farm", "Auto Farm", false, function(toggleState)
     if toggleState then
         print("On")
     else
