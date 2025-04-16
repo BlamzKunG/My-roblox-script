@@ -3,7 +3,7 @@ local LocalPlayer = Players.LocalPlayer
 
 -- ใส่ URL GitHub ที่เป็น RAW ได้หลายอัน
 local githubURLs = {
-    "https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/KillForAutoFarm.lua",
+    "https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/AutoRejoin30s.lua",
     "https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Ka1t.lua"
     -- เพิ่ม URL ใหม่ได้ที่นี่
 }
