@@ -1,6 +1,9 @@
 -- CONFIG
-local headshotOnly = true -- true = ยิงใส่หัวเท่านั้น
+local headshotOnly = true        -- true = ยิงเฉพาะหัว
+local hitChance = 0.9            -- โอกาสยิงโดน (0.0 - 1.0)
+local minDelay, maxDelay = 0.15, 0.25 -- เวลาระหว่างยิง (สุ่มเพื่อหลีกเลี่ยงโดนตรวจจับ)
 
+-- หาเป้าหมายที่ใกล้ที่สุด (ไม่สนว่ามองเห็นหรือไม่)
 local function getClosestPlayer()
     local closest, dist = nil, math.huge
     for _, plr in pairs(game.Players:GetPlayers()) do
@@ -8,7 +11,7 @@ local function getClosestPlayer()
             and plr.Character 
             and plr.Character:FindFirstChild("HumanoidRootPart") 
             and plr.Character:FindFirstChild("Head") 
-            and not plr.Character:FindFirstChildOfClass("ForceField") then -- ข้ามถ้ามีบาเรีย
+            and not plr.Character:FindFirstChildOfClass("ForceField") then
 
             local d = (plr.Character.HumanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
             if d < dist then
@@ -19,37 +22,43 @@ local function getClosestPlayer()
     end
     return closest
 end
--- FUNCTION ยิงกระสุนแบบ Fake ไปที่เป้าหมาย
+
+-- ยิงแบบเงียบ
 local function fireSilent()
+    if math.random() > hitChance then return end
+
+    local tool = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool")
+    if not tool then return end
+
     local target = getClosestPlayer()
     if not target then return end
 
     local targetPart = headshotOnly and target.Character:FindFirstChild("Head") or target.Character:FindFirstChild("HumanoidRootPart")
     if not targetPart then return end
 
-    -- ยิงกระสุน
-    local dir = (targetPart.Position - game.Players.LocalPlayer.Character.Head.Position).Unit
+    local origin = game.Players.LocalPlayer.Character.Head.Position
+    local dir = (targetPart.Position - origin).Unit
 
-    local args = {
-        [1] = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool"), -- เช่น AWM
+    -- ยิงกระสุน
+    local args1 = {
+        [1] = tool,
         [2] = {
             id = 1,
             charge = 0,
             dir = dir,
-            origin = game.Players.LocalPlayer.Character.Head.Position
+            origin = origin
         }
     }
+    game.ReplicatedStorage.WeaponsSystem.Network.WeaponFired:FireServer(unpack(args1))
 
-    game.ReplicatedStorage.WeaponsSystem.Network.WeaponFired:FireServer(unpack(args))
-
-    -- ส่งผลกระทบว่าโดนเป้า
+    -- กระทบเป้า
     local args2 = {
-        [1] = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool"),
+        [1] = tool,
         [2] = {
             p = targetPart.Position,
             pid = 1,
             part = targetPart,
-            d = 100, -- ดาเมจใส่เองได้
+            d = 100,
             maxDist = 100,
             h = targetPart,
             m = Enum.Material.Plastic,
@@ -58,11 +67,11 @@ local function fireSilent()
             n = Vector3.new(0, 1, 0)
         }
     }
-
     game.ReplicatedStorage.WeaponsSystem.Network.WeaponHit:FireServer(unpack(args2))
 end
 
--- ยิงทุก 0.2 วิ
-while task.wait(0.1) do
+-- ยิงวนไปเรื่อย ๆ
+while true do
     fireSilent()
+    task.wait(math.random() * (maxDelay - minDelay) + minDelay)
 end
