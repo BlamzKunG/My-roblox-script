@@ -13,6 +13,10 @@ tab.newToggle("Fast Attack", "Fast Attack", false, function(FastAttack)
     end
 end)
 
-tab.newButton("Auto Fuse", "Auto Fuse OP", function()
+tab2.newButton("Auto Fuse to Gold", "Auto Fuse OP", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Atf.lua"))()
+end)
+
+tab2.newButton("Auto Fuse to Rainbow", "Auto Fuse OP", function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Afr.lua"))()
 end)
