@@ -1,0 +1,11 @@
+-- FastAttack.lua
+getgenv().FastAttack = true
+
+task.spawn(function()
+    while getgenv().FastAttack do
+        pcall(function()
+            game:GetService("ReplicatedStorage").Events.Fight.ClickDamage:FireServer()
+        end)
+        task.wait(0.05)
+    end
+end)
