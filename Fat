@@ -6,6 +6,6 @@ task.spawn(function()
         pcall(function()
             game:GetService("ReplicatedStorage").Events.Fight.ClickDamage:FireServer()
         end)
-        task.wait(0.05)
+        task.wait(0.01)
     end
 end)
