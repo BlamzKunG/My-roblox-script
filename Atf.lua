@@ -1,25 +1,25 @@
--- สมมติว่าเราจะใช้ UUID ตัวแรกที่เจอจากกระเป๋า
-local relicContainer = game.Players.LocalPlayer.PlayerGui.MainUI.CenterMenu["遺器"].PetsContainer.Right.List
-local firstUUID = nil
+local player = game.Players.LocalPlayer
+local relicUI = player.PlayerGui.MainUI.CenterMenu:FindFirstChildWhichIsA("Frame") -- 避ชื่อภาษาจีน
 
-for _, item in pairs(relicContainer:GetChildren()) do
-    if item:IsA("Frame") then
-        firstUUID = item.Name
-        break
+if relicUI and relicUI:FindFirstChild("PetsContainer") then
+    local list = relicUI.PetsContainer.Right.List
+    local uuidList = {}
+
+    for _, item in pairs(list:GetChildren()) do
+        if item:IsA("Frame") then
+            table.insert(uuidList, item.Name)
+        end
     end
-end
 
-if firstUUID then
-    local args = {
-        [1] = "Golden",
-        [2] = { [1] = firstUUID,
-                [2] = firstUUID, 
-                [3] = firstUUID, 
-                [4] = firstUUID 
-               }
-    }
-
-    game:GetService("ReplicatedStorage").Events.Pets.Re_PetFuse:FireServer(unpack(args))
+    for _, uuid in pairs(uuidList) do
+        local fuseSet = {uuid, uuid, uuid, uuid}
+        local args = {
+            [1] = "Golden",
+            [2] = fuseSet
+        }
+        game:GetService("ReplicatedStorage").Events.Pets.Re_PetFuse:FireServer(unpack(args))
+        task.wait(0.2)
+    end
 else
-    warn("ไม่พบ Relic ในกระเป๋า")
+    warn("ไม่พบ UI Relic")
 end
