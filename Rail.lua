@@ -4,6 +4,8 @@ local window = DrRayLibrary:Load("Lxxuak Hub", "Default")
 local tab = DrRayLibrary.newTab("Main", "ImageIdHere")
 local tab2 = DrRayLibrary.newTab("Auto Farm", "ImageIdHere")
 
+--loadstring(game:HttpGet(""))()
+
 tab.newToggle("Fast Attack", "Fast Attack", false, function(FastAttack)
     getgenv().FastAttack = FastAttack
     if FastAttack then
@@ -11,9 +13,9 @@ tab.newToggle("Fast Attack", "Fast Attack", false, function(FastAttack)
     end
 end)
 
-tab.newButton("Button", "Prints Hello!", function(AutoFG)
+tab2.newButton("Button", "Prints Hello!", function(AutoFG)
     getgenv().FastAttack = AutoFG
     if AutoFG then
-        
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Atf.lua"))()
     end
 end)
