@@ -1,10 +1,11 @@
-local Library = loadstring(Game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/wizard"))()
-local Window = Library:NewWindow("Star Rail Simulator")
+local DrRayLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/AZYsGithub/DrRay-UI-Library/main/DrRay.lua"))()
+local window = DrRayLibrary:Load("Lxxuak Hub", "Default")
+local tab = DrRayLibrary.newTab("Main", "ImageIdHere")
 
-local Tab = Window:NewSection("My Tab")
-
-Tab:CreateButton("Button", function()
-
-print("hello")
-
+tab.newToggle("Hitbox Expand", "Head Hitbox Expand", false, function(toggleState)
+    if toggleState then
+        print("On")
+    else
+        print("Off")
+    end
 end)
