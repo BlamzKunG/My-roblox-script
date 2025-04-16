@@ -13,9 +13,6 @@ tab.newToggle("Fast Attack", "Fast Attack", false, function(FastAttack)
     end
 end)
 
-tab2.newButton("Button", "Prints Hello!", function(AutoFG)
-    getgenv().FastAttack = AutoFG
-    if AutoFG then
+tab2.newButton("Button", "Prints Hello!", function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Atf.lua"))()
-    end
 end)
