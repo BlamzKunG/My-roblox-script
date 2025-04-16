@@ -1,11 +1,15 @@
 -- CONFIG
 local headshotOnly = true -- true = ยิงใส่หัวเท่านั้น
 
--- FUNCTION หาเป้าหมายที่ใกล้ที่สุด
 local function getClosestPlayer()
     local closest, dist = nil, math.huge
     for _, plr in pairs(game.Players:GetPlayers()) do
-        if plr ~= game.Players.LocalPlayer and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") and plr.Character:FindFirstChild("Head") then
+        if plr ~= game.Players.LocalPlayer 
+            and plr.Character 
+            and plr.Character:FindFirstChild("HumanoidRootPart") 
+            and plr.Character:FindFirstChild("Head") 
+            and not plr.Character:FindFirstChildOfClass("ForceField") then -- ข้ามถ้ามีบาเรีย
+
             local d = (plr.Character.HumanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
             if d < dist then
                 dist = d
@@ -15,7 +19,6 @@ local function getClosestPlayer()
     end
     return closest
 end
-
 -- FUNCTION ยิงกระสุนแบบ Fake ไปที่เป้าหมาย
 local function fireSilent()
     local target = getClosestPlayer()
@@ -60,6 +63,6 @@ local function fireSilent()
 end
 
 -- ยิงทุก 0.2 วิ
-while task.wait(0.05) do
+while task.wait(0.1) do
     fireSilent()
 end
