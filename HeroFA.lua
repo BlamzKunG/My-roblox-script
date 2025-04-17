@@ -15,7 +15,14 @@ local function attackAllPets()
     end
 end
 
+getgenv().HeroFA = true
+
 -- สั่งให้โจมตีวนเรื่อย ๆ ทุก 0.1 วิ (ตีไวมาก)
-while task.wait(0.05) do
-    attackAllPets()
-end
+task.spawn(function()
+    while getgenv().HeroFA do
+        pcall(function()
+            attackAllPets()
+        end)
+        task.wait(0.05)
+    end
+end)
