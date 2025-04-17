@@ -1,45 +1,78 @@
-local HttpService = game:GetService("HttpService")
 local TeleportService = game:GetService("TeleportService")
+local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
 
-local function getMostPopulatedServer()
-    local placeId = game.PlaceId
+local TARGET_USERNAME = "A_ABadLorena" -- ไม่ต้องใส่ @
+local GAME_ID = game.PlaceId
+local WAIT_TIME_BEFORE_REJOIN = 30
+
+-- Function: รีจอยไป Server ที่คนเยอะที่สุด (ไม่นับ Server ปัจจุบัน)
+local function getServerWithMostPlayers()
     local servers = {}
     local cursor = ""
-    local mostPlayers = 0
-    local bestServerId = nil
 
     repeat
-        local url = "https://games.roblox.com/v1/games/"..placeId.."/servers/Public?sortOrder=Desc&limit=100" .. (cursor ~= "" and "&cursor="..cursor or "")
-        local success, result = pcall(function()
+        local url = string.format("https://games.roblox.com/v1/games/%d/servers/Public?sortOrder=Desc&limit=100&cursor=%s", GAME_ID, cursor)
+        local success, response = pcall(function()
             return HttpService:JSONDecode(game:HttpGet(url))
         end)
 
-        if success and result and result.data then
-            for _, server in ipairs(result.data) do
-                local playerCount = server.playing
-                if playerCount > mostPlayers and playerCount < server.maxPlayers then
-                    mostPlayers = playerCount
-                    bestServerId = server.id
+        if success and response and response.data then
+            for _, server in ipairs(response.data) do
+                if server.playing < server.maxPlayers and server.id ~= game.JobId then
+                    table.insert(servers, server)
                 end
             end
-            cursor = result.nextPageCursor
+            cursor = response.nextPageCursor or ""
         else
-            warn("ไม่สามารถดึงข้อมูลเซิร์ฟเวอร์ได้")
+            warn("โหลดลิสต์เซิร์ฟเวอร์ล้มเหลว")
             break
         end
-    until not cursor
 
-    return bestServerId
+        task.wait(0.5)
+    until cursor == nil or cursor == ""
+
+    table.sort(servers, function(a, b)
+        return a.playing > b.playing
+    end)
+
+    return servers[1]
 end
 
--- รอ 30 วินาที
-task.wait(30)
+-- Function: รีจอยไปยัง Server ที่ระบุ
+local function teleportToServer(serverId)
+    TeleportService:TeleportToPlaceInstance(GAME_ID, serverId, LocalPlayer)
+end
 
--- ค้นหา server แล้วเทเลพอร์ต
-local bestServerId = getMostPopulatedServer()
-if bestServerId then
-    TeleportService:TeleportToPlaceInstance(game.PlaceId, bestServerId, Players.LocalPlayer)
-else
-    warn("ไม่พบเซิร์ฟเวอร์ที่เหมาะสมสำหรับการเข้าร่วม")
+-- Function: รีจอยทันทีถ้าพบผู้เล่นเป้าหมาย
+local function checkForTargetAndRejoin()
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player.Name == TARGET_USERNAME or player.DisplayName == TARGET_USERNAME then
+            print("พบ " .. TARGET_USERNAME .. " รีจอยทันที")
+            task.wait(0.5)
+            local bestServer = getServerWithMostPlayers()
+            if bestServer then
+                teleportToServer(bestServer.id)
+            end
+            return
+        end
+    end
+end
+
+-- ตรวจสอบเป้าหมายทุกครั้งมีผู้เล่นเข้าใหม่
+Players.PlayerAdded:Connect(function(player)
+    if player.Name == TARGET_USERNAME or player.DisplayName == TARGET_USERNAME then
+        checkForTargetAndRejoin()
+    end
+end)
+
+-- เช็กตอนเริ่มต้นเผื่อเจออยู่แล้ว
+checkForTargetAndRejoin()
+
+-- ถ้ายังไม่เจอ รอ 30 วิ แล้วรีจอยตามปกติ
+task.wait(WAIT_TIME_BEFORE_REJOIN)
+local bestServer = getServerWithMostPlayers()
+if bestServer then
+    teleportToServer(bestServer.id)
 end
