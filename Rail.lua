@@ -27,6 +27,13 @@ tab2.newToggle("AutoClaim", "AutoClaim", false, function(AutoClaim)
     end
 end)
 
+tab2.newToggle("Auto Spin UGC", "Auto Spin UGC", false, function(AutoUGCSpin)
+    getgenv().HeroFA = AutoUGCSpin
+    if AutoUGCSpin then
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/AutoUGCSpin.lua"))()
+    end
+end)
+
 tab2.newButton("Auto Fuse to Gold", "Auto Fuse OP", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Atf.lua"))()
 end)
@@ -34,3 +41,5 @@ end)
 tab2.newButton("Auto Fuse to Rainbow", "Auto Fuse OP", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Afr.lua"))()
 end)
+
+
