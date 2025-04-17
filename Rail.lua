@@ -20,15 +20,22 @@ tab.newToggle("Hero Fast Attack", "Hero Fast Attack", false, function(HeroFA)
     end
 end)
 
+tab.newToggle("Auto Rebirth", "AutoRebirth", false, function(AutoRebirth)
+    getgenv().AutoRebirth = AutoRebirth
+    if AutoRebirth then
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/AutoRebirth.lua"))()
+    end
+end)
+
 tab2.newToggle("AutoClaim", "AutoClaim", false, function(AutoClaim)
-    getgenv().HeroFA = AutoClaim
+    getgenv().AutoClaim = AutoClaim
     if AutoClaim then
         loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Autocli.lua"))()
     end
 end)
 
 tab2.newToggle("Auto Spin UGC", "Auto Spin UGC", false, function(AutoUGCSpin)
-    getgenv().HeroFA = AutoUGCSpin
+    getgenv().AutoUGCSpin = AutoUGCSpin
     if AutoUGCSpin then
         loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/AutoUGCSpin.lua"))()
     end
