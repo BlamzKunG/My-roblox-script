@@ -1,23 +1,37 @@
-local Players = game:GetService("Players")
-local player = Players.LocalPlayer
+-- กำหนดจุดปลอดภัย (แก้ไข Vector3 ตามจุดที่ต้องการ)
+local safePosition = Vector3.new(0, 200, 0) -- ย้ายขึ้นไปกลางอากาศ
 
-local function moveBelowMap()
-    local char = player.Character or player.CharacterAdded:Wait()
-    local hrp = char:WaitForChild("HumanoidRootPart")
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
 
-    -- ล็อกตัวไว้
-    hrp.Anchored = true
-
-    -- ย้ายลงไปตำแหน่ง Y = -100 โดยยังอยู่ตำแหน่งเดิมในแนว X/Z
-    local currentPos = hrp.Position
-    hrp.CFrame = CFrame.new(currentPos.X, -100, currentPos.Z)
+-- ลบ Force เก่าออกถ้ามี
+for _, v in pairs(hrp:GetChildren()) do
+    if v:IsA("BodyPosition") or v:IsA("BodyGyro") then
+        v:Destroy()
+    end
 end
 
--- หากยังไม่มีตัวละคร ให้รอก่อน
-if player.Character then
-    moveBelowMap()
-else
-    player.CharacterAdded:Connect(function()
-        moveBelowMap()
-    end)
+-- สร้าง BodyPosition ให้ลอยค้าง
+local bodyPos = Instance.new("BodyPosition")
+bodyPos.Position = safePosition
+bodyPos.MaxForce = Vector3.new(1e6, 1e6, 1e6)
+bodyPos.P = 12500
+bodyPos.D = 1000
+bodyPos.Parent = hrp
+
+-- สร้าง BodyGyro ให้หมุนค้าง
+local bodyGyro = Instance.new("BodyGyro")
+bodyGyro.CFrame = hrp.CFrame
+bodyGyro.MaxTorque = Vector3.new(1e6, 1e6, 1e6)
+bodyGyro.P = 3000
+bodyGyro.Parent = hrp
+
+-- เทเลพอร์ตตัวละครไปตำแหน่งปลอดภัย
+hrp.CFrame = CFrame.new(safePosition)
+
+-- ล็อกตำแหน่งซ้ำทุก 2 วินาที (กันหลุด)
+while true do
+    task.wait(2)
+    bodyPos.Position = safePosition
 end
