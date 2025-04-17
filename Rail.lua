@@ -13,6 +13,13 @@ tab.newToggle("Fast Attack", "Fast Attack", false, function(FastAttack)
     end
 end)
 
+tab.newToggle("Hero Fast Attack", "Hero Fast Attack", false, function(HeroFA)
+    getgenv().HeroFA = HeroFA
+    if HeroFA then
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/HeroFA.lua"))()
+    end
+end)
+
 tab2.newButton("Auto Fuse to Gold", "Auto Fuse OP", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Atf.lua"))()
 end)
