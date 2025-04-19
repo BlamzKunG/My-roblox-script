@@ -41,6 +41,13 @@ tab2.newToggle("Auto Spin UGC", "Auto Spin UGC", false, function(AutoUGCSpin)
     end
 end)
 
+tab2.newToggle("Auto Hatch", "Auto Hatch Herta space only", false, function(AutoHatch)
+    getgenv().AutoHatch = AutoHatch
+    if AutoHatch then
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/AutoHatch.lua"))()
+    end
+end)
+
 tab2.newButton("Auto Fuse to Gold", "Auto Fuse OP", function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Atf.lua"))()
 end)
