@@ -1,6 +1,6 @@
 -- Configuration
-local discordInvite = "https://discord.gg/YOURINVITE"
-local githubRawKeyURL = "https://raw.githubusercontent.com/yourusername/yourrepo/main/key.txt"
+local discordInvite = "https://discord.com/invite/AbmG6nYhAp"
+local githubRawKeyURL = "https://raw.githubusercontent.com/BlamzKunG/My-roblox-sc/refs/heads/main/Key.txt"
 
 -- Services
 local Players = game:GetService("Players")
