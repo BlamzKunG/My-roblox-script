@@ -7,10 +7,10 @@ task.spawn(function()
     while getgenv().AutoHatch do
         pcall(function()
             local args = {
-                [1] = "TripleHatch", -- เปลี่ยนเป็น "SingleHatch" ได้ถ้าต้องการ
-                [2] = "Draw005",     -- กาชาที่จะสุ่ม
+                [1] = "TripleHatch", -- หรือ "SingleHatch" ได้เช่นกัน
+                [2] = "Draw005",     -- ชื่อกาชา
                 [3] = {
-                    [1] = "Pet025",
+                    [1] = "Pet025",  -- รายชื่อ Pet ที่จะ Auto Delete ทันทีหลังสุ่มได้
                     [2] = "Pet026",
                     [3] = "Pet027",
                     [4] = "Pet028",
@@ -19,6 +19,6 @@ task.spawn(function()
             }
             Hatch:FireServer(unpack(args))
         end)
-        task.wait(60) -- สุ่มทุก 60 วินาที
+        task.wait(10) -- สุ่มทุก 10 วินาที
     end
 end)
