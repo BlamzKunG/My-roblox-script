@@ -17,7 +17,7 @@ task.spawn(function()
             game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("GemEvent"):FireServer(1000)
             game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("DigEvent"):FireServer()
         end)
-        task.wait() -- แทบจะรัว 60fps
+        task.wait(0.001) -- แทบจะรัว 60fps
     end
 end)
     end
