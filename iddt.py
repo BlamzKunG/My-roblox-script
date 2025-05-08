@@ -1,113 +1,105 @@
-import pandas as pd
-import numpy as np
-from utils import log_info, log_error
+from utils import log_info
+
+def calculate_confidence(scores):
+    base = 50
+    bonus = sum(scores)
+    # clamp between 10 and 99
+    return max(10, min(base + bonus, 99))
 
 
-def prepare_dataframe(raw_data):
-    """แปลงข้อมูลจาก JSON ให้เป็น DataFrame และจัดการประเภทข้อมูล"""
-    df = pd.DataFrame(raw_data)
-    df['datetime'] = pd.to_datetime(df['datetime'])
-    df = df.sort_values('datetime')  # จัดเรียงจากเวลาเก่า -> ใหม่
+def analyze_signal(df):
+    """
+    วิเคราะห์จากอินดิเคเตอร์ เพื่อให้สัญญาณ Buy, Sell หรือ Hold
+    กลยุทธ์อัปเกรด:
+      - MACD Cross + RSI + EMA200 + VWAP + OBV
+      - Price Breakout EMA200
+      - RSI Oversold/Overbought Reversal
+      - OBV Divergence
+      - Trend Continuation with ATR
+    """
+    if df is None or len(df) < 3:
+        return "HOLD", "ข้อมูลไม่เพียงพอสำหรับการวิเคราะห์", 0
 
-    # แปลงค่าตัวเลขหลักให้เป็น float
-    for col in ['open', 'high', 'low', 'close']:
-        df[col] = pd.to_numeric(df[col], errors='coerce')
+    latest = df.iloc[-1]
+    previous = df.iloc[-2]
+    before_prev = df.iloc[-3]
 
-    # ตรวจสอบว่ามี volume หรือไม่
-    if 'volume' in df.columns:
-        df['volume'] = pd.to_numeric(df['volume'], errors='coerce')
-    else:
-        log_error("ไม่มีคอลัมน์ 'volume' ในข้อมูลที่รับมา")
+    # ดึงค่าที่จำเป็น
+    macd = latest.get('MACD')
+    signal_line = latest.get('Signal')
+    macd_prev = previous.get('MACD')
+    signal_prev = previous.get('Signal')
+    rsi = latest.get('RSI')
+    ema200 = latest.get('EMA_200')
+    close = latest.get('close')
+    prev_close = previous.get('close')
+    vwap = latest.get('VWAP')
+    obv = latest.get('OBV')
+    obv_prev = previous.get('OBV')
+    obv_prev2 = before_prev.get('OBV')
+    atr = latest.get('ATR')
+    mean_atr = df['ATR'].mean() if 'ATR' in df.columns else None
 
-    return df
+    # HELPER: ฟังก์ชันตรวจสอบค่าพร้อมเปรียบเทียบ
+    def is_valid(*args):
+        return all(arg is not None for arg in args)
 
+    # เก็บคะแนนสำหรับ confidence
+    scores = []
 
-def calculate_ema(df, period=14):
-    df[f'EMA_{period}'] = df['close'].ewm(span=period, adjust=False).mean()
-    return df
+    # STRATEGY 1: Intelligent MACD Cross
+    if is_valid(macd_prev, signal_prev, macd, signal_line, rsi, ema200, close, vwap, obv, obv_prev) and \
+       macd_prev < signal_prev and macd > signal_line and 50 < rsi < 70 and close > ema200 and close > vwap and obv > obv_prev:
+        scores = [10, 15, 10]
+        log_info("พบสัญญาณซื้อ (Buy) แบบ MACD + RSI + EMA + OBV")
+        return "BUY", f"MACD↑, RSI: {rsi:.2f}, Close > EMA200 & VWAP, OBV↑", calculate_confidence(scores)
 
+    # STRATEGY 2: Price Breakout EMA200
+    if is_valid(ema200, close, prev_close) and prev_close <= ema200 < close:
+        scores = [20]
+        log_info("พบสัญญาณซื้อ (Buy) จาก Breakout EMA200")
+        return "BUY", f"Breakout EMA200: {prev_close:.2f} → {close:.2f}", calculate_confidence(scores)
 
-def calculate_macd(df):
-    df['EMA_12'] = df['close'].ewm(span=12, adjust=False).mean()
-    df['EMA_26'] = df['close'].ewm(span=26, adjust=False).mean()
-    df['MACD'] = df['EMA_12'] - df['EMA_26']
-    df['Signal'] = df['MACD'].ewm(span=9, adjust=False).mean()
-    df['MACD_Hist'] = df['MACD'] - df['Signal']
-    return df
+    # STRATEGY 3: RSI Reversal from Oversold
+    prev_rsi = previous.get('RSI')
+    if is_valid(prev_rsi, rsi) and prev_rsi < 30 < rsi:
+        scores = [15]
+        log_info("พบสัญญาณซื้อ (Buy) จาก RSI Oversold Reversal")
+        return "BUY", f"RSI Reversal: {prev_rsi:.2f} → {rsi:.2f}", calculate_confidence(scores)
 
+    # STRATEGY 4: OBV Divergence
+    if is_valid(obv_prev2, obv_prev, obv, prev_close, before_prev.get('close'), close) and \
+       before_prev['close'] > prev_close > close and obv_prev2 < obv_prev < obv:
+        scores = [10]
+        log_info("พบสัญญาณซื้อ (Buy) จาก OBV Divergence")
+        return "BUY", "ราคา ↓ แต่ OBV ↑ → อาจเกิด Divergence", calculate_confidence(scores)
 
-def calculate_rsi(df, period=14):
-    delta = df['close'].diff()
-    gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
-    loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
+    # STRATEGY 5: Trend Continuation with ATR
+    if is_valid(atr, mean_atr, ema200, close) and atr > mean_atr * 1.2 and close > ema200:
+        scores = [10]
+        log_info("พบสัญญาณซื้อ (Buy) จากแนวโน้มต่อเนื่อง (ATR + EMA)")
+        return "BUY", f"ATR: {atr:.2f}, แนวโน้มแข็งแกร่งต่อเนื่อง", calculate_confidence(scores)
 
-    rs = gain / loss
-    df['RSI'] = 100 - (100 / (1 + rs))
-    return df
+    # STRATEGY 6: Intelligent Sell (MACD + RSI + EMA + OBV)
+    if is_valid(macd_prev, signal_prev, macd, signal_line, rsi, ema200, close, vwap, obv, obv_prev) and \
+       macd_prev > signal_prev and macd < signal_line and 30 < rsi < 50 and close < ema200 and close < vwap and obv < obv_prev:
+        scores = [10, 15, 10]
+        log_info("พบสัญญาณขาย (Sell) แบบ MACD + RSI + EMA + OBV")
+        return "SELL", f"MACD↓, RSI: {rsi:.2f}, Close < EMA200 & VWAP, OBV↓", calculate_confidence(scores)
 
+    # STRATEGY 7: RSI Overbought Reversal
+    if is_valid(prev_rsi, rsi) and prev_rsi > 70 > rsi:
+        scores = [15]
+        log_info("พบสัญญาณขาย (Sell) จาก RSI Overbought Reversal")
+        return "SELL", f"RSI Reversal: {prev_rsi:.2f} → {rsi:.2f}", calculate_confidence(scores)
 
-def calculate_stochastic_rsi(df, period=14):
-    # คำนวณ RSI ก่อน
-    df = calculate_rsi(df, period)
-    min_rsi = df['RSI'].rolling(window=period).min()
-    max_rsi = df['RSI'].rolling(window=period).max()
-    df['StochRSI'] = (df['RSI'] - min_rsi) / (max_rsi - min_rsi)
-    return df
+    # STRATEGY 8: Break Below EMA200
+    if is_valid(ema200, close, prev_close) and prev_close >= ema200 > close:
+        scores = [20]
+        log_info("พบสัญญาณขาย (Sell) จาก Breakdown EMA200")
+        return "SELL", f"Breakdown EMA200: {prev_close:.2f} → {close:.2f}", calculate_confidence(scores)
 
-
-def calculate_atr(df, period=14):
-    high_low = df['high'] - df['low']
-    high_close = np.abs(df['high'] - df['close'].shift())
-    low_close = np.abs(df['low'] - df['close'].shift())
-    ranges = pd.concat([high_low, high_close, low_close], axis=1)
-
-    true_range = ranges.max(axis=1)
-    df['ATR'] = true_range.rolling(window=period).mean()
-    df['ATR_%'] = (df['ATR'] / df['close']) * 100
-    return df
-
-
-def calculate_bollinger_bands(df, period=20, std_dev=2):
-    sma = df['close'].rolling(window=period).mean()
-    std = df['close'].rolling(window=period).std()
-    df['BB_Upper'] = sma + std_dev * std
-    df['BB_Lower'] = sma - std_dev * std
-    df['BB_%B'] = (df['close'] - df['BB_Lower']) / (df['BB_Upper'] - df['BB_Lower'])
-    return df
-
-
-def calculate_vwap(df):
-    if 'volume' not in df.columns:
-        log_error("ไม่สามารถคำนวณ VWAP เนื่องจากไม่มีคอลัมน์ 'volume'")
-        return df
-    df['TP'] = (df['high'] + df['low'] + df['close']) / 3
-    df['Cum_TPV'] = (df['TP'] * df['volume']).cumsum()
-    df['Cum_Vol'] = df['volume'].cumsum()
-    df['VWAP'] = df['Cum_TPV'] / df['Cum_Vol']
-    return df
-
-
-def calculate_obv(df):
-    if 'volume' not in df.columns:
-        log_error("ไม่สามารถคำนวณ OBV เนื่องจากไม่มีคอลัมน์ 'volume'")
-        return df
-    df['OBV'] = 0
-    obv = np.where(df['close'] > df['close'].shift(), df['volume'], 
-                   np.where(df['close'] < df['close'].shift(), -df['volume'], 0))
-    df['OBV'] = obv.cumsum()
-    return df
-
-
-def apply_indicators(raw_data):
-    df = prepare_dataframe(raw_data)
-    df = calculate_ema(df, period=50)
-    df = calculate_ema(df, period=200)
-    df = calculate_macd(df)
-    df = calculate_rsi(df)
-    df = calculate_stochastic_rsi(df)
-    df = calculate_atr(df)
-    df = calculate_bollinger_bands(df)
-    df = calculate_vwap(df)
-    df = calculate_obv(df)
-    log_info("คำนวณอินดิเคเตอร์ทั้งหมดเสร็จแล้ว")
-    return df
+    # HOLD
+    scores = []
+    log_info("ยังไม่พบสัญญาณที่ชัดเจน (Hold)")
+    return "HOLD", f"MACD: {macd:.2f}, RSI: {rsi:.2f}, Close: {close:.2f}", calculate_confidence(scores)
