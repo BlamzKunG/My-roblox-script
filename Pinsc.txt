@@ -1,0 +1,29 @@
+//@version=5 indicator("Ultimate Buy/Sell Signal", overlay=true, shorttitle="UBSS")
+
+// INPUTS fastEMA_len = input.int(50, "Fast EMA Length") slowEMA_len = input.int(200, "Slow EMA Length") rsi_len     = input.int(14, "RSI Length") rsi_buy     = input.int(30, "RSI Oversold") rsi_sell    = input.int(70, "RSI Overbought") macd_fast   = input.int(12, "MACD Fast Length") macd_slow   = input.int(26, "MACD Slow Length") macd_sig    = input.int(9,  "MACD Signal Length") adx_len     = input.int(14, "ADX Length") adx_thresh  = input.int(20, "ADX Threshold") atr_len     = input.int(14, "ATR Length") vol_mult    = input.float(1.5, "Volume Multiplier Filter") manual_tf   = input.timeframe("", "Higher Timeframe (optional)")
+
+// CALCULATIONS // EMAs for trend direction fastEMA = ta.ema(close, fastEMA_len) slowEMA = ta.ema(close, slowEMA_len) trendUp = fastEMA > slowEMA trendDn = fastEMA < slowEMA
+
+// RSI filter rsi = ta.rsi(close, rsi_len)
+
+// MACD filter [macdLine, signalLine, hist] = ta.macd(close, macd_fast, macd_slow, macd_sig) macdPos = hist > 0 macdNeg = hist < 0
+
+// ADX must indicate trend strength adx = ta.adx(adx_len) strongTrend = adx > adx_thresh
+
+// ATR filter for volatility-based stop atr = ta.atr(atr_len)
+
+// Volume filter: volume > average volume * multiplier volFilt = volume > ta.sma(volume, 20) * vol_mult
+
+// Composite buy/sell conditions buyCond  = trendUp and strongTrend and macdPos and rsi < rsi_buy and volFilt sellCond = trendDn and strongTrend and macdNeg and rsi > rsi_sell and volFilt
+
+// Plot signals plotshape(buyCond, title="Buy Signal", location=location.belowbar, color=color.green, style=shape.triangleup, size=size.small, text="BUY") plotshape(sellCond, title="Sell Signal", location=location.abovebar, color=color.red, style=shape.triangledown, size=size.small, text="SELL")
+
+// Strategy entries/exits (uncomment for strategy) /* strategy.entry("Long", strategy.long, when=buyCond) strategy.entry("Short", strategy.short, when=sellCond)
+
+// Optional ATR-based exit stopLoss = atr * 1.5 strategy.exit("Exit Long", from_entry="Long", stop=close - stopLoss) strategy.exit("Exit Short", from_entry="Short", stop=close + stopLoss) */
+
+// OPTIONAL: Higher timeframe confirmation if manual_tf != "" ht_close = request.security(syminfo.tickerid, manual_tf, close) // only trade in direction of HTF buyCond := buyCond and ht_close > request.security(syminfo.tickerid, manual_tf, ta.ema(close, slowEMA_len)) sellCond := sellCond and ht_close < request.security(syminfo.tickerid, manual_tf, ta.ema(close, slowEMA_len))
+
+// Alerts alertcondition(buyCond, title="Buy Alert", message="Ultimate Buy/Sell Signal: BUY") alertcondition(sellCond, title="Sell Alert", message="Ultimate Buy/Sell Signal: SELL")
+
+// STYLE plot(fastEMA, color=color.yellow) plot(slowEMA, color=color.blue)
