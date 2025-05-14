@@ -116,7 +116,7 @@ RunService.RenderStepped:Connect(function()
 
     -- Aimbot Logic
     local target = getBestTarget()
-    if target and target.Character and target.Character:FindFirstChild("HumanoidRootPart") then
+    if target and target.Character and target.Character:FindFirstChild("Head") then
         local aimPos = target.Character.HumanoidRootPart.Position
         local currentPos = Camera.CFrame.Position
         local newCF = CFrame.new(currentPos, aimPos)
