@@ -27,3 +27,4 @@
 // Alerts alertcondition(buyCond, title="Buy Alert", message="Ultimate Buy/Sell Signal: BUY") alertcondition(sellCond, title="Sell Alert", message="Ultimate Buy/Sell Signal: SELL")
 
 // STYLE plot(fastEMA, color=color.yellow) plot(slowEMA, color=color.blue)
+
