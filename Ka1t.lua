@@ -1,7 +1,7 @@
 -- CONFIG
 local headshotOnly = true        -- true = ยิงเฉพาะหัว
 local hitChance = 1.0            -- โอกาสยิงโดน (0.0 - 1.0)
-local minDelay, maxDelay = 0.01, 0.3 -- เวลาระหว่างยิง (สุ่มเพื่อหลีกเลี่ยงโดนตรวจจับ)
+local minDelay, maxDelay = 0.005, 0.01 -- เวลาระหว่างยิง (สุ่มเพื่อหลีกเลี่ยงโดนตรวจจับ)
 
 -- หาเป้าหมายที่ใกล้ที่สุด (ไม่สนว่ามองเห็นหรือไม่)
 local function getClosestPlayer()
