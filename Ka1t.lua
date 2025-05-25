@@ -11,7 +11,13 @@ local function getClosestPlayer()
             and plr.Character 
             and plr.Character:FindFirstChild("HumanoidRootPart") 
             and plr.Character:FindFirstChild("Head") 
-            and not plr.Character:FindFirstChildOfClass("ForceField") then
+            and not plr.Character:FindFirstChildOfClass("ForceField")
+            and not table.find(
+                table.map(plr.Character:GetChildren(), function(child)
+                    return string.lower(child.Name):find("fire") and true or nil
+                end),
+                true
+            ) then
 
             local d = (plr.Character.HumanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
             if d < dist then
