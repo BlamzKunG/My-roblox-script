@@ -1,0 +1,293 @@
+//+------------------------------------------------------------------+
+//|                                                   Supertrend.mq5 |
+//|                        Copyright 2025, MetaQuotes Software Corp. |
+//|                                             https://www.mql5.com |
+//+------------------------------------------------------------------+
+#property copyright "Copyright 2025, MetaQuotes Software Corp."
+#property link      "https://www.mql5.com"
+#property version   "1.00"
+#property description "Supertrend Indicator"
+
+#property indicator_chart_window
+#property indicator_buffers 3 // Supertrend Line, UpTrend Fill, DownTrend Fill
+#property indicator_plots   3
+
+//--- Plot Supertrend Line (combined for up/down, color changes)
+#property indicator_label1  "Supertrend"
+#property indicator_type1   DRAW_LINE
+#property indicator_color1  clrGreen,clrRed // Color changes based on trend
+#property indicator_style1  STYLE_SOLID
+#property indicator_width1  2
+
+//--- Plot UpTrend Fill (invisible line, used for filling)
+#property indicator_label2  "UpTrendFill"
+#property indicator_type2   DRAW_FILLING
+#property indicator_color2  clrGreen
+#property indicator_style2  STYLE_SOLID
+#property indicator_width2  1
+#property indicator_level1  0 // For filling from/to a level (not strictly needed here but good practice)
+
+//--- Plot DownTrend Fill (invisible line, used for filling)
+#property indicator_label3  "DownTrendFill"
+#property indicator_type3   DRAW_FILLING
+#property indicator_color3  clrRed
+#property indicator_style3  STYLE_SOLID
+#property indicator_width3  1
+#property indicator_level2  0 // For filling from/to a level
+
+//--- Input Parameters
+input int    InpAtrPeriod = 10;    // ATR Length
+input double InpFactor    = 3.0;   // Factor
+
+//--- Indicator Buffers
+double ExtSupertrendBuffer[];
+double ExtUpTrendFillBuffer[];    // Buffer for uptrend fill base (body middle)
+double ExtDownTrendFillBuffer[];  // Buffer for downtrend fill base (body middle)
+double ExtDirectionBuffer[];      // To store trend direction (-1 for up, 1 for down)
+double ExtAtrBuffer[];
+double ExtUpperBandBuffer[];
+double ExtLowerBandBuffer[];
+
+//--- Global variables
+int    h_atr;
+int    prev_direction = 0; // 0: initial, -1: up, 1: down
+
+//+------------------------------------------------------------------+
+//| Custom indicator initialization function                         |
+//+------------------------------------------------------------------+
+int OnInit()
+  {
+//--- Indicator buffers mapping
+   SetIndexBuffer(0, ExtSupertrendBuffer, INDICATOR_DATA);
+   SetIndexBuffer(1, ExtUpTrendFillBuffer, INDICATOR_DATA); // Fill buffer for uptrend
+   SetIndexBuffer(2, ExtDownTrendFillBuffer, INDICATOR_DATA); // Fill buffer for downtrend
+
+   // Auxiliary buffers (not plotted directly, but used for calculations)
+   SetIndexBuffer(3, ExtDirectionBuffer, INDICATOR_CALCULATIONS);
+   SetIndexBuffer(4, ExtAtrBuffer, INDICATOR_CALCULATIONS);
+   SetIndexBuffer(5, ExtUpperBandBuffer, INDICATOR_CALCULATIONS);
+   SetIndexBuffer(6, ExtLowerBandBuffer, INDICATOR_CALCULATIONS);
+
+//--- Set plot properties
+   PlotIndexSetInteger(0, PLOT_DRAW_BEGIN, InpAtrPeriod); // Supertrend line starts after ATR period
+   PlotIndexSetDouble(1, PLOT_EMPTY_VALUE, EMPTY_VALUE);
+   PlotIndexSetDouble(2, PLOT_EMPTY_VALUE, EMPTY_VALUE);
+
+   PlotIndexSetInteger(1, PLOT_RGB_COLOR, GetTrueColor(clrGreen, 90)); // Uptrend fill color with transparency
+   PlotIndexSetInteger(2, PLOT_RGB_COLOR, GetTrueColor(clrRed, 90));   // Downtrend fill color with transparency
+
+   PlotIndexSetInteger(1, PLOT_DRAW_BEGIN, InpAtrPeriod);
+   PlotIndexSetInteger(2, PLOT_DRAW_BEGIN, InpAtrPeriod);
+
+   // Set fill levels
+   PlotIndexSetDouble(1, PLOT_FILLING_LEVEL_VALUE, 0); // Will be body middle
+   PlotIndexSetDouble(2, PLOT_FILLING_LEVEL_VALUE, 0); // Will be body middle
+
+
+//--- Initialize ATR indicator
+   h_atr = iATR(NULL, 0, InpAtrPeriod);
+   if(h_atr == INVALID_HANDLE)
+     {
+      Print("Error creating ATR indicator handle");
+      return(INIT_FAILED);
+     }
+
+//--- Set indicator short name
+   IndicatorSetString(INDICATOR_SHORTNAME, "Supertrend(" + IntegerToString(InpAtrPeriod) + "," + DoubleToString(InpFactor, 2) + ")");
+
+//--- Initialization done
+   return(INIT_SUCCEEDED);
+  }
+//+------------------------------------------------------------------+
+//| Custom indicator deinitialization function                       |
+//+------------------------------------------------------------------+
+void OnDeinit(const int reason)
+  {
+//--- Release indicator handles
+   if(h_atr != INVALID_HANDLE)
+      IndicatorRelease(h_atr);
+  }
+//+------------------------------------------------------------------+
+//| Custom indicator iteration function                              |
+//+------------------------------------------------------------------+
+int OnCalculate(const int rates_total,
+                const int prev_calculated,
+                const datetime &time[],
+                const double &open[],
+                const double &high[],
+                const double &low[],
+                const double &close[],
+                const long &tick_volume[],
+                const long &volume[],
+                const int &spread[])
+  {
+//--- Check for rates
+   if(rates_total < InpAtrPeriod)
+      return(0);
+
+//--- Calculate ATR
+   CopyBuffer(h_atr, 0, 0, rates_total, ExtAtrBuffer);
+
+   int start;
+   if(prev_calculated == 0) // First calculation
+     {
+      start = InpAtrPeriod; // Start after enough data for ATR
+      // Initialize direction buffer to avoid uninitialized read in first valid calc
+      ArrayInitialize(ExtDirectionBuffer, 0);
+      ArrayInitialize(ExtSupertrendBuffer, EMPTY_VALUE);
+      ArrayInitialize(ExtUpTrendFillBuffer, EMPTY_VALUE);
+      ArrayInitialize(ExtDownTrendFillBuffer, EMPTY_VALUE);
+     }
+   else
+     {
+      start = prev_calculated - 1;
+     }
+
+//--- Main calculation loop
+   for(int i = start; i < rates_total; i++)
+     {
+      if(i == 0) // Skip the very first bar to prevent array out of bounds for [i-1]
+      {
+          ExtSupertrendBuffer[i] = EMPTY_VALUE;
+          ExtDirectionBuffer[i] = 0; // No direction yet
+          ExtUpTrendFillBuffer[i] = EMPTY_VALUE;
+          ExtDownTrendFillBuffer[i] = EMPTY_VALUE;
+          continue;
+      }
+
+      double atr_val = ExtAtrBuffer[i];
+      double hl2 = (high[i] + low[i]) / 2.0;
+
+      ExtUpperBandBuffer[i] = hl2 + InpFactor * atr_val;
+      ExtLowerBandBuffer[i] = hl2 - InpFactor * atr_val;
+
+      double prev_supertrend = ExtSupertrendBuffer[i - 1];
+      int current_direction = 0; // -1 for up, 1 for down
+
+      // Determine current Supertrend value and direction
+      if(ExtDirectionBuffer[i-1] == -1) // Previous was uptrend
+        {
+         if(close[i] > ExtLowerBandBuffer[i-1]) // Check against previous lower band
+            current_direction = -1;
+         else
+            current_direction = 1; // Change to downtrend
+        }
+      else if(ExtDirectionBuffer[i-1] == 1) // Previous was downtrend
+        {
+         if(close[i] < ExtUpperBandBuffer[i-1]) // Check against previous upper band
+            current_direction = 1;
+         else
+            current_direction = -1; // Change to uptrend
+        }
+      else // Initial state or trend just established (check i > 0)
+        {
+         if(close[i] > ExtUpperBandBuffer[i])
+            current_direction = -1; // Start with uptrend
+         else
+            current_direction = 1;  // Start with downtrend
+        }
+
+      // Calculate Supertrend based on direction
+      if(current_direction == -1) // Uptrend
+        {
+         ExtSupertrendBuffer[i] = ExtLowerBandBuffer[i];
+         if(ExtLowerBandBuffer[i] < ExtLowerBandBuffer[i-1] && close[i-1] > ExtLowerBandBuffer[i-1] && i > 0) // Pine's behavior for trailing
+             ExtSupertrendBuffer[i] = ExtLowerBandBuffer[i-1];
+         if(ExtSupertrendBuffer[i-1] > 0 && ExtLowerBandBuffer[i] < ExtSupertrendBuffer[i-1] && current_direction == ExtDirectionBuffer[i-1]) // Maintain previous level if new lower band is lower during uptrend
+             ExtSupertrendBuffer[i] = MathMax(ExtSupertrendBuffer[i-1], ExtLowerBandBuffer[i]);
+
+        }
+      else // Downtrend (current_direction == 1)
+        {
+         ExtSupertrendBuffer[i] = ExtUpperBandBuffer[i];
+         if(ExtUpperBandBuffer[i] > ExtUpperBandBuffer[i-1] && close[i-1] < ExtUpperBandBuffer[i-1] && i > 0) // Pine's behavior for trailing
+             ExtSupertrendBuffer[i] = ExtUpperBandBuffer[i-1];
+         if(ExtSupertrendBuffer[i-1] > 0 && ExtUpperBandBuffer[i] > ExtSupertrendBuffer[i-1] && current_direction == ExtDirectionBuffer[i-1]) // Maintain previous level if new upper band is higher during downtrend
+             ExtSupertrendBuffer[i] = MathMin(ExtSupertrendBuffer[i-1], ExtUpperBandBuffer[i]);
+        }
+
+      ExtDirectionBuffer[i] = current_direction;
+
+      // Plotting logic for Supertrend line (color change)
+      // MQL5 handles color change in #property indicator_color1 by assigning different values
+      // to the same buffer. We need to ensure only one value is valid.
+      // However, a simpler way for distinct up/down trend lines in Pine is to use two separate plot lines in MQL5
+      // or to set the color dynamically per bar if using one line.
+      // For this conversion, we will stick to one line and change its color.
+      // The #property indicator_color1 handles this if ExtSupertrendBuffer contains the value.
+
+      // Fill Buffers
+      double bodyMiddle = (open[i] + close[i]) / 2.0;
+      if(current_direction == -1) // Uptrend
+        {
+         ExtUpTrendFillBuffer[i] = ExtSupertrendBuffer[i];
+         PlotIndexSetDouble(1, PLOT_FILLING_LEVEL_VALUE, bodyMiddle); // Fill from bodyMiddle to Supertrend
+         ExtDownTrendFillBuffer[i] = EMPTY_VALUE; // No downtrend fill
+        }
+      else // Downtrend
+        {
+         ExtDownTrendFillBuffer[i] = ExtSupertrendBuffer[i];
+         PlotIndexSetDouble(2, PLOT_FILLING_LEVEL_VALUE, bodyMiddle); // Fill from bodyMiddle to Supertrend
+         ExtUpTrendFillBuffer[i] = EMPTY_VALUE;   // No uptrend fill
+        }
+
+
+      // --- Alerts ---
+      if(i > 0 && rates_total > prev_calculated) // Ensure we are on a new bar and not recalculating history
+        {
+         int prev_dir_alert = (int)ExtDirectionBuffer[i - 1];
+         int curr_dir_alert = (int)ExtDirectionBuffer[i];
+
+         // Downtrend to Uptrend
+         if(prev_dir_alert == 1 && curr_dir_alert == -1)
+           {
+            Alert("Supertrend: ", Symbol(), " ", PeriodSecondsToString(Period()), " - Downtrend to Uptrend");
+           }
+         // Uptrend to Downtrend
+         else if(prev_dir_alert == -1 && curr_dir_alert == 1)
+           {
+            Alert("Supertrend: ", Symbol(), " ", PeriodSecondsToString(Period()), " - Uptrend to Downtrend");
+           }
+         // Generic Trend Change (covers both, can be redundant if the specific ones are active)
+         // else if (prev_dir_alert != 0 && curr_dir_alert != 0 && prev_dir_alert != curr_dir_alert) {
+         //    Alert("Supertrend: ", Symbol(), " ", PeriodSecondsToString(Period()), " - Trend Change");
+         // }
+        }
+     }
+//--- Return value of prev_calculated for next call
+   return(rates_total);
+  }
+//+------------------------------------------------------------------+
+//| Helper function to convert period seconds to string              |
+//+------------------------------------------------------------------+
+string PeriodSecondsToString(int seconds)
+  {
+   switch(seconds)
+     {
+      case 60: return "M1";
+      case 300: return "M5";
+      case 900: return "M15";
+      case 1800: return "M30";
+      case 3600: return "H1";
+      case 14400: return "H4";
+      case 86400: return "D1";
+      case 604800: return "W1";
+      case 2592000: return "MN1"; // Approximate for MN1
+      default: return IntegerToString(seconds) + "s";
+     }
+  }
+//+------------------------------------------------------------------+
+// Helper function to get a true color with alpha (transparency)
+// MQL5 uses ARGB, Pine uses RGBA where A is 0 (opaque) to 100 (transparent)
+// MQL5 alpha: 0 = opaque, 255 = fully transparent
+// Pine alpha: 0 = opaque, 100 = fully transparent (color.new(color, 90) -> 90% transparent)
+//+------------------------------------------------------------------+
+color GetTrueColor(color base_color, int transparency_pine) // transparency_pine is 0-100
+{
+    if (transparency_pine < 0) transparency_pine = 0;
+    if (transparency_pine > 100) transparency_pine = 100;
+
+    uchar alpha = uchar(255 * (transparency_pine / 100.0)); // MQL5 alpha
+    return(ColorToARGB(base_color, alpha));
+}
+//+------------------------------------------------------------------+
