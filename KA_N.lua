@@ -39,7 +39,7 @@ task.spawn(function()
                             dir = dir
                         }
                     }
-                    game.ReplicatedStorage.WeaponsSystem.Network.W_Fired:FireServer(unpack(fireArgs))
+                    game.ReplicatedStorage.WeaponsSystem.Network.W__red:FireServer(unpack(fireArgs))
 
                     -- ผลกระทบ
                     local hitArgs = {
@@ -57,7 +57,7 @@ task.spawn(function()
                             n = Vector3.new(0, 1, 0)
                         }
                     }
-                    game.ReplicatedStorage.WeaponsSystem.Network.W_Hit:FireServer(unpack(hitArgs))
+                    game.ReplicatedStorage.WeaponsSystem.Network.W__it:FireServer(unpack(hitArgs))
                 end
             end
         end
