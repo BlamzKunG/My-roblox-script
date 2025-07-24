@@ -1,92 +1,15 @@
-แน่นอน! นี่คือ prompt สำหรับ GitHub Copilot ที่ออกแบบมาเพื่อสร้างเว็บไซต์ข้อมูลโรงเรียนตามที่คุณต้องการ โดยเน้นความสวยงาม ทันสมัย และฟังก์ชัน Dark/Light mode:
-
-**Prompt for GitHub Copilot:**
-
-"Create a modern, clean, and visually appealing school information website. The website should be highly detailed, featuring beautiful imagery, and a sleek, minimalist aesthetic. Implement both a Dark Mode and Light Mode with a user-friendly toggle.
-
-**Key Sections & Features:**
-
-* **Homepage:**
-    * Large, rotating hero image/slideshow showcasing school life (students, facilities, activities).
-    * Concise, engaging school motto/mission statement.
-    * "About Us" summary with a clear call to action to learn more.
-    * Latest news/announcements feed (e.g., upcoming events, achievements).
-    * Quick links to key sections (e.g., Admissions, Curriculum, Contact).
-    * Social media integration (icons linking to school's profiles).
-
-* **About Us:**
-    * Comprehensive school history and philosophy.
-    * Vision and Mission statements.
-    * School leadership team (with photos and short bios).
-    * Accreditations and affiliations.
-    * Photo gallery of school facilities and campus.
-
-* **Admissions:**
-    * Clear step-by-step admissions process.
-    * Admission requirements (by grade level/program).
-    * Tuition and fees information.
-    * Application forms (downloadable PDF or link to online portal).
-    * Scholarship opportunities (if applicable).
-    * FAQ section for common admissions queries.
-
-* **Academics/Curriculum:**
-    * Overview of educational philosophy.
-    * Detailed descriptions of programs offered (e.g., Preschool, Primary, Secondary, IB, AP).
-    * Subject-specific information (e.g., Math, Science, Arts, Sports).
-    * Learning outcomes and pedagogical approaches.
-    * Extracurricular activities and clubs.
-
-* **Student Life:**
-    * Showcase of student activities, clubs, and organizations.
-    * Sports programs and achievements.
-    * Arts and cultural events.
-    * Community service initiatives.
-    * Student support services (counseling, health).
-    * Student testimonials (quotes with photos).
-
-* **News & Events:**
-    * Chronological list of news articles and announcements.
-    * Event calendar with details (date, time, location, description).
-    * Ability to filter/categorize news and events.
-    * Image galleries for past events.
-
-* **Contact Us:**
-    * School address, phone number, email.
-    * Google Maps integration for school location.
-    * Contact form for inquiries.
-    * Key personnel contacts (e.g., Admissions Office, General Inquiries).
-
-**Technical & Design Considerations:**
-
-* **Framework/Library:** Suggest using a modern front-end framework (e.g., React, Vue, Next.js, or a robust static site generator if content is mostly static) for a performant and maintainable website. Alternatively, suggest modern HTML, CSS, and JavaScript.
-* **Styling:** Utilize CSS-in-JS (e.g., Styled Components, Emotion) or Tailwind CSS for clean, maintainable, and responsive styling. Focus on a minimalist color palette with subtle accents.
-* **Responsiveness:** Ensure full responsiveness across all devices (mobile, tablet, desktop).
-* **Image Optimization:** Implement lazy loading and optimized image formats for fast loading times.
-* **Typography:** Choose modern, readable fonts that complement the clean aesthetic.
-* **Animations:** Subtle, tasteful animations for enhanced user experience (e.g., hover effects, section transitions).
-* **Accessibility:** Adhere to WCAG guidelines for accessibility.
-* **Dark Mode/Light Mode:** Implement with a clear, persistent toggle in the header. The color scheme should elegantly switch between light and dark themes, ensuring good contrast and readability in both.
-* **Code Structure:** Organize code into logical components/modules for easy understanding and future expansion.
-* **Commented Code:** Provide clear and concise comments where necessary.
-
-**Example User Interaction/Flow:**
-
-* User navigates to the homepage, sees a beautiful hero image and latest news.
-* They click on "About Us" to learn more about the school's philosophy.
-* They then explore the "Admissions" section to find out how to apply.
-* Finally, they switch to Dark Mode for a more comfortable viewing experience at night.
-
-**Expected Output:**
-
-Provide the basic HTML structure, CSS for the layout and initial styling (including Dark/Light mode toggling logic and base styles), and any necessary JavaScript for interactivity (e.g., image slider, toggle functionality). Focus on a well-structured, modern design that is easily extensible."
-
----
-
-**คำแนะนำเพิ่มเติมสำหรับการใช้งานกับ GitHub Copilot:**
-
-* **แบ่งเป็นส่วนย่อยๆ (Iterative Development):** หาก Copilot สร้างโค้ดออกมาเยอะเกินไปในครั้งเดียว คุณสามารถแบ่ง prompt เป็นส่วนย่อยๆ ได้ เช่น "Create the basic HTML structure for the homepage with a hero section and navigation bar." แล้วค่อยๆ เพิ่มส่วนอื่นๆ เข้าไป
-* **ระบุเทคโนโลยีที่ต้องการ:** หากคุณมีเทคโนโลยีที่ต้องการใช้เป็นพิเศษ เช่น "Use React and Tailwind CSS for the front-end," ให้ระบุลงไปใน prompt
-* **ให้ตัวอย่าง (ถ้ามี):** หากคุณมีเว็บไซต์โรงเรียนที่ชอบเป็นการส่วนตัว หรือมี Mood board คุณสามารถอธิบายลักษณะเฉพาะเจาะจงมากขึ้นได้
-* **ทดสอบและปรับแก้:** โค้ดที่ Copilot สร้างขึ้นมาเป็นจุดเริ่มต้นที่ดีเสมอ คุณควรทดสอบและปรับแก้ให้ตรงตามความต้องการของคุณมากที่สุด
-
-หวังว่า prompt นี้จะเป็นประโยชน์ในการสร้างเว็บไซต์โรงเรียนที่คุณต้องการนะครับ!
+// Create a responsive and modern personal portfolio website using HTML, CSS (TailwindCSS preferred), and JavaScript (React optional).
+// The site should showcase past coding projects and achievements in a visually impressive, futuristic "Cyberpunk" or "Techno-Cyber" style.
+// It will be used for a university application to study Computer Science, so the focus should be on clarity, creativity, and technical presentation.
+// The site should have a dark theme with neon/glow accents (blue, purple, pink, green), animated background elements (like matrix lines or cyber grid), and sleek transitions.
+// Required sections: 
+// 1. Hero section with my name "Sakdithat", age "18", and a short intro like "Aspiring Computer Scientist with a passion for coding and creating innovative projects".
+// 2. Projects section: cards or grid displaying 3–6 projects with title, tech stack (icons or badges), description, and GitHub link.
+// 3. About Me: a short paragraph about my passion in programming and interest in computer science.
+// 4. Skills: list of programming languages and tools (e.g., Python, JavaScript, HTML/CSS, React, Git, etc.) – ideally with icons.
+// 5. Contact: simple contact form or email/social media links (LinkedIn, GitHub).
+// Use smooth animations (Framer Motion or CSS transitions), interactive hover effects, and responsive layout (desktop/tablet/mobile).
+// Use semantic HTML5 tags, accessibility best practices (like alt text, labels), and clean code structure.
+// If using React, break down components by section (e.g., Header, Hero, Projects, About, Skills, Footer).
+// Bonus: add a glowing cyber-style cursor and subtle background music toggle (optional).
+// Target audience: university admission team evaluating my passion and skill in programming.
