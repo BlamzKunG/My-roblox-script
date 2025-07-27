@@ -1,139 +1,232 @@
 //+------------------------------------------------------------------+
-//| SuperTrend Grid EA with ATR Filter & Trend‑Change Close         |
-//| - เปิด Grid orders ตามเทรนด์ที่คำนวณจาก SuperTrend           |
-//| - กรองตลาด Sideway ด้วย ATR                                    |
-//| - ปิดรวบทุกออร์เดอร์เมื่อ trend เปลี่ยน                         |
+//|                                     Supertrend Grid EA (MQL5)    |
+//|                          Translated from Pine Script for User    |
+//|                                     https://www.google.com       |
 //+------------------------------------------------------------------+
+#property copyright "Translated by Gemini"
+#property link      "https://gemini.google.com"
+#property version   "1.10" // Version updated
+
 #include <Trade\Trade.mqh>
 
-input int    ATR_Period       = 10;    // ATR Length
-input double Multiplier       = 3.0;   // SuperTrend Factor
-input int    GridSpacingPips = 10;     // ระยะห่าง grid (pip)
-input double BaseLot          = 0.01;  // ขนาด lot
-input double MinATR           = 10.0;  // filter Sideway (ค่า ATR ขั้นต่ำ)
-input int    MaxGridOrders    = 5;     // จำกัดจำนวน grid orders
+//--- EA Input Parameters
+input int      atrPeriod          = 10;          // ATR Period
+input double   factor             = 3.0;         // Supertrend Factor
+input int      Grid_Distance_Pips = 100;         // ระยะห่างของแต่ละออเดอร์ (Pips)
+input double   Lot_Size           = 0.01;        // ขนาด Lot
+input int      Max_Grid_Orders    = 7;           // จำนวนออเดอร์สูงสุดใน Grid
+input ulong    Magic_Number       = 12345;       // Magic Number สำหรับ EA
 
+//--- Global variables
 CTrade trade;
+int    h_Supertrend;
 
-//— internal state variables —
-datetime lastBarTime    = 0;    // เก็บเวลาแท่งก่อนหน้า
-int      lastDirection  = 0;    // +1=Uptrend, -1=Downtrend, 0=ยังไม่เคยเทรนด์
-double   lastSuperValue = 0;    // ค่าสาย SuperTrend ก่อนหน้า
-double   basePrice      = 0;    // ราคาที่ใช้คุม grid spacing
-
-//+------------------------------------------------------------------+
-//| ตรวจจับ New Bar                                                  |
-//+------------------------------------------------------------------+
-bool IsNewBar()
+enum TrendDirection
 {
-   datetime t = iTime(_Symbol, _Period, 0);  // เวลาแท่งปัจจุบัน
-   if(t != lastBarTime)
-   {
-      lastBarTime = t;
-      return true;
-   }
-   return false;
-}
+    UP,
+    DOWN,
+    NEUTRAL
+};
 
 //+------------------------------------------------------------------+
-//| Initialization                                                   |
+//| Expert initialization function                                   |
 //+------------------------------------------------------------------+
 int OnInit()
 {
-   trade.SetAsyncMode(true);
-   Print("SuperTrend‐Grid EA initialized");
-   return INIT_SUCCEEDED;
+    //--- Initialize trade object
+    trade.SetExpertMagicNumber(Magic_Number);
+    trade.SetMarginMode();
+    trade.SetTypeFillingBySymbol(Symbol());
+
+    //--- Initialize Supertrend Custom Indicator
+    h_Supertrend = iCustom(_Symbol, _Period, "SupertrendCustom", atrPeriod, factor);
+     if(h_Supertrend == INVALID_HANDLE)
+    {
+        Print("Error creating Supertrend indicator handle. Make sure 'SupertrendCustom.mq5' is compiled in the Indicators folder.");
+        return(INIT_FAILED);
+    }
+    
+    return(INIT_SUCCEEDED);
 }
 
 //+------------------------------------------------------------------+
-//| OnTick: รันเมื่อมี tick ใหม่                                     |
+//| Expert tick function                                             |
 //+------------------------------------------------------------------+
 void OnTick()
 {
-   if(!IsNewBar()) 
-      return;  // ทำงานเฉพาะเมื่อเป็นแท่งใหม่
+    //--- We only work on a new bar
+    static datetime last_bar_time = 0;
+    datetime current_bar_time = (datetime)SeriesInfoInteger(_Symbol, _Period, SERIES_LASTBAR_DATE);
+    if(current_bar_time == last_bar_time)
+    {
+        return;
+    }
+    last_bar_time = current_bar_time;
 
-   // 1) คำนวณ ATR (shift=1 คือแท่งก่อนหน้า)
-   double atr = iATR(_Symbol, _Period, ATR_Period);
-   if(atr < MinATR)
-      return;  // ถ้า ATR ต่ำกว่า threshold → ตลาดนิ่ง ไม่เทรด
+    //--- Get Supertrend direction from the last two closed bars
+    double st_value[2];
+    if(CopyBuffer(h_Supertrend, 0, 1, 2, st_value) < 2) return;
+    
+    double price_close[2];
+    if(CopyClose(_Symbol, _Period, 1, 2, price_close) < 2) return;
 
-   // 2) คำนวณ SuperTrend
-   double prevHigh  = iHigh(_Symbol, _Period, 1);
-   double prevLow   = iLow (_Symbol, _Period, 1);
-   double prevClose = iClose(_Symbol, _Period, 1);
-   double hl2       = (prevHigh + prevLow) / 2.0;
-   double upperBand = hl2 + Multiplier * atr;
-   double lowerBand = hl2 - Multiplier * atr;
+    TrendDirection current_trend = (price_close[0] > st_value[0]) ? UP : DOWN;
+    TrendDirection prev_trend    = (price_close[1] > st_value[1]) ? UP : DOWN;
 
-   // หาทิศทางจากการเทียบกับค่าสายก่อนหน้า
-   int direction = (prevClose > lastSuperValue) ? +1 : -1;
-   double superValue = (direction == +1 ? lowerBand : upperBand);
-
-   // 3) ถ้า trend เปลี่ยน ⇒ ปิดรวบทั้งหมด
-   if(lastDirection != 0 && direction != lastDirection)
-   {
-      CloseAllGrid();
-      Print("Trend changed: closed all orders");
-      basePrice = prevClose;            // รีเซ็ตฐานราคา grid
-   }
-
-   lastDirection  = direction;
-   lastSuperValue = superValue;
-
-   // 4) เปิด Grid orders ตามทิศทาง trend
-   int totalPos = PositionsTotal();
-   if(totalPos < MaxGridOrders)
-   {
-      // ถ้ายังไม่มี order เปิดไม้แรกทันที
-      if(totalPos == 0)
-      {
-         OpenGridOrder(direction);
-         basePrice = prevClose;
-      }
-      else
-      {
-         double pipSize = GridSpacingPips * _Point;
-         bool moveFarEnough = (direction == +1
-                               ? prevClose - basePrice >= pipSize
-                               : basePrice - prevClose >= pipSize);
-         if(moveFarEnough)
-         {
-            OpenGridOrder(direction);
-            basePrice = prevClose;
-         }
-      }
-   }
+    //--- Check for trend change
+    if(current_trend != prev_trend)
+    {
+        if(current_trend == UP)
+        {
+            CloseAllSellOrders();
+            Print("Supertrend changed to UP. Closing all SELL positions.");
+        }
+        else // current_trend == DOWN
+        {
+            CloseAllBuyOrders();
+            Print("Supertrend changed to DOWN. Closing all BUY positions.");
+        }
+    }
+    
+    //--- Main Grid Logic
+    ManageGrid(current_trend);
 }
 
+
 //+------------------------------------------------------------------+
-//| ฟังก์ชันเปิด Grid order                                         |
+//| Manage Grid Orders                                               |
 //+------------------------------------------------------------------+
-void OpenGridOrder(int dir)
+void ManageGrid(TrendDirection trend)
 {
-   if(dir == +1)
-   {
-      if(trade.Buy(BaseLot, _Symbol))
-         Print("Grid BUY opened at ", DoubleToString(iClose(_Symbol,_Period,1), _Digits));
-   }
-   else
-   {
-      if(trade.Sell(BaseLot, _Symbol))
-         Print("Grid SELL opened at ", DoubleToString(iClose(_Symbol,_Period,1), _Digits));
-   }
+    int buy_orders = CountOpenOrders(POSITION_TYPE_BUY);
+    int sell_orders = CountOpenOrders(POSITION_TYPE_SELL);
+    
+    if(trend == UP)
+    {
+        if(buy_orders < Max_Grid_Orders)
+        {
+            if(buy_orders == 0)
+            {
+                trade.Buy(Lot_Size, _Symbol, SymbolInfoDouble(_Symbol, SYMBOL_ASK), 0, 0, "Supertrend Grid Buy");
+            }
+            else
+            {
+                // Corrected call with MQL5 enum
+                double last_buy_price = GetLastOrderOpenPrice(ORDER_TYPE_BUY);
+                double current_ask_price = SymbolInfoDouble(_Symbol, SYMBOL_ASK);
+                
+                // Open new buy if price drops by grid distance
+                if(last_buy_price > 0 && last_buy_price - current_ask_price >= Grid_Distance_Pips * _Point)
+                {
+                    trade.Buy(Lot_Size, _Symbol, current_ask_price, 0, 0, "Supertrend Grid Buy");
+                }
+            }
+        }
+    }
+    else // trend == DOWN
+    {
+        if(sell_orders < Max_Grid_Orders)
+        {
+            if(sell_orders == 0)
+            {
+                trade.Sell(Lot_Size, _Symbol, SymbolInfoDouble(_Symbol, SYMBOL_BID), 0, 0, "Supertrend Grid Sell");
+            }
+            else
+            {
+                // Corrected call with MQL5 enum
+                double last_sell_price = GetLastOrderOpenPrice(ORDER_TYPE_SELL);
+                double current_bid_price = SymbolInfoDouble(_Symbol, SYMBOL_BID);
+                
+                // Open new sell if price rises by grid distance
+                if(last_sell_price > 0 && current_bid_price - last_sell_price >= Grid_Distance_Pips * _Point)
+                {
+                    trade.Sell(Lot_Size, _Symbol, current_bid_price, 0, 0, "Supertrend Grid Sell");
+                }
+            }
+        }
+    }
 }
 
-//+------------------------------------------------------------------+
-//| ฟังก์ชันปิดรวบทุก order                                         |
-//+------------------------------------------------------------------+
-void CloseAllGrid()
+
+// --- Helper Functions ---
+
+void CloseAllBuyOrders()
 {
-   for(int i = PositionsTotal() - 1; i >= 0; i--)
-   {
-      ulong ticket = PositionGetTicket(i);
-      if(PositionSelectByTicket(ticket))
-         trade.PositionClose(ticket);
-   }
+    for(int i = PositionsTotal() - 1; i >= 0; i--)
+    {
+        if(PositionGetSymbol(i) == _Symbol && PositionGetInteger(POSITION_MAGIC) == Magic_Number)
+        {
+            if(PositionGetInteger(POSITION_TYPE) == POSITION_TYPE_BUY)
+            {
+                trade.PositionClose(PositionGetTicket(i));
+            }
+        }
+    }
 }
 
-//+------------------------------------------------------------------+
+void CloseAllSellOrders()
+{
+    for(int i = PositionsTotal() - 1; i >= 0; i--)
+    {
+        if(PositionGetSymbol(i) == _Symbol && PositionGetInteger(POSITION_MAGIC) == Magic_Number)
+        {
+            if(PositionGetInteger(POSITION_TYPE) == POSITION_TYPE_SELL)
+            {
+                trade.PositionClose(PositionGetTicket(i));
+            }
+        }
+    }
+}
+
+int CountOpenOrders(ENUM_POSITION_TYPE type)
+{
+    int count = 0;
+    for(int i = 0; i < PositionsTotal(); i++)
+    {
+        if(PositionGetSymbol(i) == _Symbol && PositionGetInteger(POSITION_MAGIC) == Magic_Number)
+        {
+            if(PositionGetInteger(POSITION_TYPE) == type)
+            {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+//--- Corrected Function to get the last order's open price
+double GetLastOrderOpenPrice(ENUM_ORDER_TYPE order_type)
+{
+    ulong    last_ticket = 0;
+    datetime last_time = 0;
+    
+    // Determine the position type to look for based on the order type
+    ENUM_POSITION_TYPE position_type_to_find = (order_type == ORDER_TYPE_BUY) ? POSITION_TYPE_BUY : POSITION_TYPE_SELL;
+
+    for(int i = PositionsTotal() - 1; i >= 0; i--)
+    {
+        // Select position by index to get its properties
+        if(PositionGetSymbol(i) == _Symbol)
+        {
+             if(PositionGetInteger(POSITION_MAGIC) == Magic_Number && PositionGetInteger(POSITION_TYPE) == position_type_to_find)
+             {
+                 datetime open_time = (datetime)PositionGetInteger(POSITION_TIME);
+                 if(open_time > last_time)
+                 {
+                     last_time = open_time;
+                     last_ticket = PositionGetInteger(POSITION_TICKET);
+                 }
+             }
+        }
+    }
+    
+    // If a position was found, get its open price
+    if(last_ticket > 0)
+    {
+        if(PositionSelectByTicket(last_ticket))
+        {
+            return PositionGetDouble(POSITION_PRICE_OPEN);
+        }
+    }
+    return 0; // Return 0 if no matching position is found
+}
