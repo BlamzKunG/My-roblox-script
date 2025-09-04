@@ -32,5 +32,4 @@ Not recommended for use in Roblox or any live environment.
 ---
 
 ## 👨‍💻 ผู้จัดทำ (Author)  
-- **BlamzKunG**  
-- สนใจด้าน Game Scripting และ Computer Science
+- **BlamzKunG** 
