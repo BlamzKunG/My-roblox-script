@@ -37,6 +37,11 @@ local function fireAll()
 	    }
     }
     game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Upgrade"):FireServer(unpack(args))
+
+	local args = {
+		true
+	}
+	game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("IncreasePop"):FireServer(unpack(args))
     
 end
 
