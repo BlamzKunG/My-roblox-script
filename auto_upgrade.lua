@@ -10,6 +10,8 @@ local function fireAll()
             }
         }
     }
+    game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Upgrade"):FireServer(unpack(args))
+
     local args = {
 	    {
 	    	{
@@ -21,6 +23,8 @@ local function fireAll()
 		    }
 	    }
     }
+    game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Upgrade"):FireServer(unpack(args))
+
     local args = {
 	    {
 		    {
@@ -33,6 +37,7 @@ local function fireAll()
 	    }
     }
     game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Upgrade"):FireServer(unpack(args))
+    
 end
 
 -- เรียกใช้ทุก 1 วินาที
