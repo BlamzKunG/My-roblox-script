@@ -44,3 +44,36 @@ end
 while task.wait(0.1) do
     fireAll()
 end
+
+
+
+local args = {
+	{
+		{
+			currencyName = "Grass",
+			amount = "1",
+			max = "49",
+			upgradeValue = "GrassAmount",
+			cost = "3"
+		}
+	}
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Upgrade"):FireServer(unpack(args))
+
+
+
+
+
+local args = {
+	{
+		{
+			currencyName = "Grass",
+			amount = "1",
+			max = "99",
+			upgradeValue = "GrassValue",
+			cost = "2"
+		}
+	}
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("Upgrade"):FireServer(unpack(args))
+
