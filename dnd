@@ -38,3 +38,78 @@ def calculate_total_atk(data):
     
 total_atk = calculate_total_atk(data)
 print(f"{total_atk}")
+
+
+{
+  "name": "Flos",
+  "level": 5,
+  "class": "mage",
+  "base_status": {
+    "hp": 100,
+    "atk": 10,
+    "dex": 10,
+    "int": 10,
+    "def": 0,
+    "str": 100,
+    "crit_rate": 5,
+    "crit_dmg": 50,
+    "luck": 0
+  },
+  "status_level": {
+    "hp": 0,
+    "atk": 1,
+    "dex": 0,
+    "int": 0,
+    "def": 0,
+    "str": 0,
+    "crit_rate": 0,
+    "crit_dmg": 0,
+    "luck": 0
+  },
+  "equipment": {
+    "left_hand": {
+      "wepoaponinfo": {
+        "name": "none",
+        "rarity": "none",
+        "type": "none"
+      },
+      "atk": 0,
+      "dex": 0,
+      "int": 0,
+      "def": 0
+    },
+    "right_hand": {
+      "wepoaponinfo": {
+        "name": "none",
+        "rarity": "none",
+        "type": "none"
+      },
+      "atk": 0,
+      "dex": 0,
+      "int": 0,
+      "def": 0
+    },
+    "armor": {
+      "slot1": {
+        "def": 0,
+        "atk": 0,
+        "int": 0
+      },
+      "slot2": {
+        "def": 0,
+        "atk": 0,
+        "int": 0
+      },
+      "slot3": {
+        "def": 0,
+        "atk": 0,
+        "int": 0
+      },
+      "slot4": {
+        "def": 0,
+        "atk": 0,
+        "int": 0
+      }
+    }
+  }
+}
