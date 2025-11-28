@@ -1,0 +1,40 @@
+import json
+
+def read_json(filename):
+    with open(filename, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def write_json(filename, data):
+    with open(filename, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+def average_score(scores):
+    return sum(scores) / len(scores)
+
+data = read_json("flos.json")
+print("ข้อมูลเดิม:", data)
+
+write_json("flos.json", data)
+print("บันทึกค่าเฉลี่ยเรียบร้อย")
+
+def calculate_total_atk(data):
+    total_atk = 0
+
+    # ✅ base atk
+    total_atk += data["base_status"]["atk"]
+
+    # ✅ status level atk
+    total_atk += data["status_level"]["atk"] * 5#
+
+    # ✅ equipment มือซ้าย + มือขวา
+    total_atk += data["equipment"]["left_hand"]["atk"]
+    total_atk += data["equipment"]["right_hand"]["atk"]
+
+    # ✅ armor ทั้ง 4 ช่อง
+    for slot in data["equipment"]["armor"].values():
+        total_atk += slot["atk"]
+
+    return total_atk
+    
+total_atk = calculate_total_atk(data)
+print(f"{total_atk}")
