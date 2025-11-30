@@ -113,3 +113,357 @@ print(f"{total_atk}")
     }
   }
 }
+
+
+
+
+import json
+import os
+import random
+
+
+def dice20_random():
+    return random.randint(1, 20)
+
+def clear():
+    os.system("cls" if os.name == "nt" else "clear")
+
+def read_json(filename):
+    with open(filename, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def write_json(filename, data):
+    load_data()
+    with open(filename, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+        
+data_flos = read_json("flos.json")
+data_carmel = read_json("carmel.json")
+data_riel = read_json("riel.json")
+data_ingame = read_json("ingame.json")
+data_monster = read_json("monster.json")
+
+def load_data():
+    data_flos = read_json("flos.json")
+    data_carmel = read_json("carmel.json")
+    ata_riel = read_json("riel.json")
+    data_ingame = read_json("ingame.json")
+    data_monster = read_json("monster.json")
+
+def calculate_flos_total_atk(data_flos):
+    data_flos = read_json("flos.json")
+    flos_total_atk = 0
+    flos_total_atk += data_flos["base_status"]["atk"]
+    flos_total_atk += data_flos["status_level"]["atk"] * 5
+    flos_total_atk += data_flos["equipment"]["left_hand"]["atk"]
+    flos_total_atk += data_flos["equipment"]["right_hand"]["atk"]
+    for slot in data_flos["equipment"]["armor"].values():
+        flos_total_atk += slot["atk"]
+
+    return flos_total_atk
+
+def calculate_carmel_total_atk(data_carmel):
+    data_carmel = read_json("carmel.json")
+    carmel_total_atk = 0
+    carmel_total_atk += data_carmel["base_status"]["atk"]
+    carmel_total_atk += data_carmel["status_level"]["atk"] * 5
+    carmel_total_atk += data_carmel["equipment"]["left_hand"]["atk"]
+    carmel_total_atk += data_carmel["equipment"]["right_hand"]["atk"]
+    for slot in data_carmel["equipment"]["armor"].values():
+        carmel_total_atk += slot["atk"]
+
+    return carmel_total_atk
+
+def calculate_riel_total_atk(data_riel):
+    data_riel = read_json("riel.json")
+    riel_total_atk = 0
+    riel_total_atk += data_riel["base_status"]["atk"]
+    riel_total_atk += data_riel["status_level"]["atk"] * 5
+    riel_total_atk += data_riel["equipment"]["left_hand"]["atk"]
+    riel_total_atk += data_riel["equipment"]["right_hand"]["atk"]
+    for slot in data_riel["equipment"]["armor"].values():
+        riel_total_atk += slot["atk"]
+
+    return riel_total_atk
+
+def calculate_total_flos_status(data_flos):
+    total_flos_status = {}
+
+    for key in data_flos["base_status"]:
+        total_flos_status[key] = (
+            data_flos["base_status"].get(key, 0) +
+            data_flos["status_level"].get(key, 0)
+        )
+
+    for hand in ["left_hand", "right_hand"]:
+        for key in total_flos_status:
+            total_flos_status[key] += data_flos["equipment"][hand].get(key, 0)
+
+    for slot in data_flos["equipment"]["armor"].values():
+        for key in total_flos_status:
+            total_flos_status[key] += slot.get(key, 0)
+
+    return total_flos_status
+
+def calculate_total_carmel_status(data_carmel):
+    total_carmel_status = {}
+
+    for key in data_carmel["base_status"]:
+        total_carmel_status[key] = (
+            data_carmel["base_status"].get(key, 0) +
+            data_carmel["status_level"].get(key, 0)
+        )
+
+    for hand in ["left_hand", "right_hand"]:
+        for key in total_carmel_status:
+            total_carmel_status[key] += data_carmel["equipment"][hand].get(key, 0)
+
+    for slot in data_carmel["equipment"]["armor"].values():
+        for key in total_carmel_status:
+            total_carmel_status[key] += slot.get(key, 0)
+
+    return total_carmel_status
+
+def calculate_total_riel_status(data_riel):
+    total_riel_status = {}
+
+    for key in data_riel["base_status"]:
+        total_riel_status[key] = (
+            data_riel["base_status"].get(key, 0) +
+            data_riel["status_level"].get(key, 0)
+        )
+
+    for hand in ["left_hand", "right_hand"]:
+        for key in total_riel_status:
+            total_riel_status[key] += data_riel["equipment"][hand].get(key, 0)
+
+    for slot in data_riel["equipment"]["armor"].values():
+        for key in total_riel_status:
+            total_riel_status[key] += slot.get(key, 0)
+
+    return total_riel_status
+
+def monster_update():
+    data_monster = read_json("monster.json")
+    monster1_hp_status = data_monster["monster1"]["level"] * 10
+    monster1_atk_status = data_monster["monster1"]["level"] * 1.5
+    monster1_def_status = data_monster["monster1"]["level"] * 0.1
+    monster1_dex_status = data_monster["monster1"]["level"] * 1
+    monster1_int_status = data_monster["monster1"]["level"] * 1
+    data_monster["monster1"]["hp"] = monster1_hp_status
+    data_monster["monster1"]["atk"] = monster1_atk_status
+    data_monster["monster1"]["def"] = monster1_def_status
+    data_monster["monster1"]["dex"] = monster1_dex_status
+    data_monster["monster1"]["int"] = monster1_int_status
+    data_monster["monster1"]["damage_taken"] = 0
+    data_monster["monster1"]["healing_received"] = 0
+    monster2_hp_status = data_monster["monster2"]["level"] * 10
+    monster2_atk_status = data_monster["monster2"]["level"] * 1.5
+    monster2_def_status = data_monster["monster2"]["level"] * 0.1
+    monster2_dex_status = data_monster["monster2"]["level"] * 1
+    monster2_int_status = data_monster["monster2"]["level"] * 1
+    data_monster["monster2"]["hp"] = monster2_hp_status
+    data_monster["monster2"]["atk"] = monster2_atk_status
+    data_monster["monster2"]["def"] = monster2_def_status
+    data_monster["monster2"]["dex"] = monster2_dex_status
+    data_monster["monster2"]["int"] = monster2_int_status
+    data_monster["monster2"]["damage_taken"] = 0
+    data_monster["monster2"]["healing_received"] = 0
+    monster3_hp_status = data_monster["monster3"]["level"] * 10
+    monster3_atk_status = data_monster["monster3"]["level"] * 1.5
+    monster3_def_status = data_monster["monster3"]["level"] * 0.1
+    monster3_dex_status = data_monster["monster3"]["level"] * 1
+    monster3_int_status = data_monster["monster3"]["level"] * 1
+    data_monster["monster3"]["hp"] = monster3_hp_status
+    data_monster["monster3"]["atk"] = monster3_atk_status
+    data_monster["monster3"]["def"] = monster3_def_status
+    data_monster["monster3"]["dex"] = monster3_dex_status
+    data_monster["monster3"]["int"] = monster3_int_status
+    data_monster["monster3"]["damage_taken"] = 0
+    data_monster["monster3"]["healing_received"] = 0
+    write_json("monster.json", data_monster)
+
+
+def ingame_update():
+    data_ingame = read_json("ingame.json")
+    data_flos = read_json("flos.json")
+    data_carmel = read_json("carmel.json")
+    data_riel = read_json("riel.json")
+
+    total_flos_stat = calculate_total_flos_status(data_flos)
+    total_carmel_stat = calculate_total_carmel_status(data_carmel)
+    total_riel_stat = calculate_total_riel_status(data_riel)
+
+    flos_reming_hp = data_ingame["flos"]["ingame_status"]["hp"] - (data_ingame["flos"]["damage_taken"] - data_ingame["flos"]["healing_received"])
+    carmel_reming_hp = data_ingame["carmel"]["ingame_status"]["hp"] - (data_ingame["carmel"]["damage_taken"] - data_ingame["carmel"]["healing_received"])
+    riel_reming_hp = data_ingame["riel"]["ingame_status"]["hp"] - (data_ingame["riel"]["damage_taken"] - data_ingame["riel"]["healing_received"])
+
+    flos_total_atk = calculate_flos_total_atk(data_flos)
+    carmel_total_atk = calculate_carmel_total_atk(data_carmel)
+    riel_total_atk = calculate_riel_total_atk(data_riel)
+
+    data_ingame["flos"]["ingame_status"]["def"] = total_flos_stat["def"] 
+    data_ingame["flos"]["ingame_status"]["dex"] = total_flos_stat["dex"]
+    data_ingame["flos"]["ingame_status"]["int"] = total_flos_stat["int"]
+    data_ingame["flos"]["ingame_status"]["crit_rate"] = total_flos_stat["crit_rate"] + data_flos["status_level"]["crit_rate"] * 2.5
+    data_ingame["flos"]["ingame_status"]["crit_dmg"] = total_flos_stat["crit_dmg"] + data_flos["status_level"]["crit_dmg"] * 5
+
+    data_ingame["carmel"]["ingame_status"]["def"] = total_carmel_stat["def"]
+    data_ingame["carmel"]["ingame_status"]["dex"] = total_carmel_stat["dex"]
+    data_ingame["carmel"]["ingame_status"]["int"] = total_carmel_stat["int"]
+    data_ingame["carmel"]["ingame_status"]["crit_rate"] = total_carmel_stat["crit_rate"] + data_carmel["status_level"]["crit_rate"] * 2.5
+    data_ingame["carmel"]["ingame_status"]["crit_dmg"] = total_carmel_stat["crit_dmg"] + data_carmel["status_level"]["crit_dmg"] * 5
+
+    data_ingame["riel"]["ingame_status"]["def"] = total_riel_stat["def"]
+    data_ingame["riel"]["ingame_status"]["dex"] = total_riel_stat["dex"]
+    data_ingame["riel"]["ingame_status"]["int"] = total_riel_stat["int"]
+    data_ingame["riel"]["ingame_status"]["crit_rate"] = total_riel_stat["crit_rate"] + data_riel["status_level"]["crit_rate"] * 2.5
+    data_ingame["riel"]["ingame_status"]["crit_dmg"] = total_riel_stat["crit_dmg"] + data_riel["status_level"]["crit_dmg"] * 5
+
+    data_ingame["flos"]["ingame_status"]["atk"] = flos_total_atk
+    data_ingame["carmel"]["ingame_status"]["atk"] = carmel_total_atk
+    data_ingame["riel"]["ingame_status"]["atk"] = riel_total_atk
+
+    data_ingame["flos"]["reming_hp"] = flos_reming_hp
+    data_ingame["carmel"]["reming_hp"] = carmel_reming_hp
+    data_ingame["riel"]["reming_hp"] = riel_reming_hp
+    write_json("ingame.json", data_ingame)
+
+def calculate_crit(atk, crit_rate, crit_dmg):
+    if random.uniform(0, 100) < crit_rate:
+        return atk + ( atk * crit_dmg / 100.0)
+
+while True:
+    print("===== MENU =====")
+    print("1 = แสดงข้อมูล")
+    print("2 = ล้างหน้าจอ")
+    print("q = ออกโปรแกรม")
+    print("c = combat")
+
+    cmd = input("เลือกคำสั่ง: ").lower()
+
+    if cmd == "u":
+        clear()
+        ingame_update()
+        monster_update()
+        print("✅ อัพเดทข้อมูล ingame เรียบร้อย")
+
+    elif cmd == "1":
+        clear()
+        while True:
+            print("===== ข้อมูลตัวละคร =====")
+            print("flos = f")
+            print("carmel = c")
+            print("riel = r")
+            print("กลับสู่เมนูหลัก = b")
+
+            sub_cmd = input("เลือกตัวละคร: ").lower()
+            if sub_cmd == "f":
+                clear()
+                print("Class " + data_flos["class"])
+                print("Level " + str(data_flos["level"]))
+                print("Attack " + str(data_flos["base_status"]["atk"]))
+                print("Dexterity " + str(data_flos["base_status"]["dex"]))
+                print("Intelligence " + str(data_flos["base_status"]["int"]))
+                print("Defense " + str(data_flos["base_status"]["def"]))
+            elif sub_cmd == "c":
+                clear()
+                print("Class " + data_carmel["class"])
+                print("Level " + str(data_carmel["level"]))
+                print("Attack " + str(data_carmel["base_status"]["atk"]))
+                print("Dexterity " + str(data_carmel["base_status"]["dex"]))
+                print("Intelligence " + str(data_carmel["base_status"]["int"]))
+                print("Defense " + str(data_carmel["base_status"]["def"]))
+            elif sub_cmd == "r":
+                clear()
+                print("Class " + data_riel["class"])
+                print("Level " + str(data_riel["level"]))
+                print("Attack " + str(data_riel["base_status"]["atk"]))
+                print("Dexterity " + str(data_riel["base_status"]["dex"]))
+                print("Intelligence " + str(data_riel["base_status"]["int"]))
+                print("Defense " + str(data_riel["base_status"]["def"]))
+            elif sub_cmd == "b":
+                clear()
+                break
+            else:
+                clear()
+                print("❌ คำสั่งไม่ถูกต้อง")
+
+    elif cmd == "2":
+        clear()   # ✅ ล้างจอเฉย ๆ แต่โปรแกรมยังรันต่อ
+
+    elif cmd == "q":
+        print("ออกจากโปรแกรม...")
+        break     # ✅ หยุดโปรแกรมจริง ๆ เฉพาะตอนนี้
+    elif cmd == "c":
+        clear()
+        print("⚔️ เริ่มการต่อสู้ ⚔️")
+        while True:
+            print("เลือกตัวละครที่จะสู้ (f/c/r) หรือ b เพื่อกลับ:")
+            print("m = monster turn")
+            print("rm = reset monster")
+            fighter_cmd = input().lower()
+            if fighter_cmd == "f":
+                clear()
+                while True:
+                    print("flos turn! เลือกการกระทำ (a = attack, b = back):")
+                    action_cmd = input().lower()
+                    if action_cmd == "b":
+                        clear()
+                        break
+                    elif action_cmd == "a":
+                        clear()
+                        while True:
+                            print("เลือก action")
+                            print("1 = attack monster")
+                            print("2 = use skill")
+                            print("b = back")
+                            action_choice = input().lower()
+                            if action_choice == "b":
+                                clear()
+                                break
+                            elif action_choice == "1":
+                                while True:
+                                    print("เลือกมอนสเตอร์ที่จะโจมตี (1/2/3) หรือ b เพื่อกลับ:")
+                                    target_cmd = input().lower()
+                                    if target_cmd == "1":
+                                        clear()
+                                        load_data()
+                                        randompoint = dice20_random()
+                                        damage = (randompoint / 10.0) * calculate_flos_total_atk(data_flos)
+                                        total_damage = calculate_crit(damage, data_ingame["flos"]["ingame_status"]["crit_rate"], data_ingame["flos"]["ingame_status"]["crit_dmg"])
+                                        print(f"flos โจมตี monster1 ด้วยการทอยลูกเต๋าได้ {randompoint} และสร้างความเสียหาย {damage}!")
+                                        #data_monster["monster1"]["damage_taken"] += damage
+                                        print(f"crit {total_damage}")
+                                        if total_damage == None:
+                                            data_monster["monster1"]["damage_taken"] += damage
+                                        else:
+                                            data_monster["monster1"]["damage_taken"] += total_damage
+                                        write_json("monster.json", data_monster)
+                                        break
+                                    elif target_cmd == "2":
+                                        clear()
+                                        print("flos โจมตี monster2!")
+                                        break
+                                    elif target_cmd == "3":
+                                        clear()
+                                        print("flos โจมตี monster3!")
+                                        break
+                                    elif target_cmd == "b":
+                                        clear()
+                                        break
+                                    else:
+                                        clear()
+                                        print("❌ คำสั่งไม่ถูกต้อง")
+            elif fighter_cmd == "rm":
+                clear()
+                monster_update()
+                print("✅ รีเซ็ตมอนสเตอร์เรียบร้อย")
+
+            elif fighter_cmd == "b":
+                clear()
+                print("กลับสู่เมนูหลัก")
+                break
+    else:
+        clear()
+        print("❌ คำสั่งไม่ถูกต้อง")
