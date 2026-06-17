@@ -1,34 +1,46 @@
-# My Roblox Scripts
+# Roblox Exploit & Automation Collection
 
-A comprehensive collection of Lua scripts for Roblox, ranging from utility tools to advanced combat and farming automation. These scripts are intended for educational and personal use.
+A specialized repository containing Lua-based exploits, automation suites, and gameplay enhancement scripts for the Roblox platform. This collection focuses on technical proof-of-concepts for game mechanics manipulation and task automation.
 
-## Repository Structure
+## Technical Categories
 
-The scripts are organized into categories for easier navigation:
+### 1. Combat & Aggression (`combat/`)
+Advanced mechanics for character-based advantages:
+*   **Kill Aura (KA):** Automated detection and elimination of entities within range.
+*   **Hitbox Manipulation:** Expansion of character hitboxes to increase projectile and melee accuracy.
+*   **Teleportation Exploits:** Instantaneous movement to target entities for elimination (TP Kill).
+*   **Aimbot Logic:** Mathematical screen-to-world coordinate mapping for automated targeting.
 
-*   **`combat/`**: Tools for combat enhancement, including Kill Aura (KA), TP Kill, Hitbox Expanders, and Aimbots.
-*   **`farming/`**: Automation for resource gathering, including Auto-Farm, Auto-Hatch, and Auto-Rebirth scripts.
-*   **`movement/`**: Scripts related to navigation and specialized movement systems.
-*   **`utility/`**: Essential tools such as Anti-AFK, Auto-Clickers, Auto-Rejoin, and ESP (Extra Sensory Perception).
-*   **`internal/`**: Configuration files and key management scripts.
-*   **`archive/`**: Legacy scripts and miscellaneous tools from previous projects.
+### 2. Automation & Resource Farming (`farming/`)
+High-efficiency loops for gameplay progression:
+*   **Auto-Farm/Rebirth:** Full-cycle gameplay automation for simulator-type environments.
+*   **Event Automation:** Scripts specifically designed for UGC spins and limited-time event participation.
 
-## How to Use
+### 3. Utility & Environmental Intelligence (`utility/`)
+Tools for environment awareness and session persistence:
+*   **ESP (Extra Sensory Perception):** Rendering of entity metadata and positions through world geometry.
+*   **Persistence Tools:** Anti-AFK and Auto-Rejoin systems to maintain session stability.
 
-1.  Ensure you have a compatible script executor.
-2.  Navigate to the category folder of the script you wish to use.
-3.  Copy the contents of the `.lua` file.
-4.  Execute the script within your chosen environment.
+## Deployment Instructions
 
-## Disclaimer
+These scripts require a compatible Lua environment or script executor.
+1.  Select a script from the categorized directories.
+2.  Input the code into your execution environment.
+3.  Monitor console output for initialization status.
 
-These scripts are provided for educational purposes and personal use. Use them at your own risk. The author is not responsible for any account bans or consequences resulting from the use of these scripts. Always use scripts responsibly and respect the terms of service of the platform.
+## Disclaimer & Risk Warning
+
+**USE AT YOUR OWN RISK.** This repository exists for educational purposes and technical demonstration. Using these scripts on the Roblox platform:
+*   Violates the Roblox Terms of Use.
+*   May result in permanent account suspension (Ban).
+*   Can lead to IP or Hardware-level restrictions.
+
+The author (**BlamzKunG**) is not responsible for any actions taken by the platform against your account.
 
 ## License
 
-This repository is licensed under a strict **Personal and Non-Commercial Use License**. 
-*   **Non-Commercial:** You may not use these scripts for any commercial purposes or revenue generation.
-*   **Attribution:** Clear credit to the author (**BlamzKunG**) must be provided if these scripts are shared or modified.
-*   **No Warranty:** Provided "as is" without any guarantees.
+This collection is licensed under **Creative Commons Attribution-NonCommercial-NoDerivs 4.0 International (CC BY-NC-ND 4.0)**.
 
-See the [LICENSE](LICENSE) file for full details.
+*   **Attribution:** You must give appropriate credit to BlamzKunG.
+*   **Non-Commercial:** You may not use this material for commercial purposes or financial gain.
+*   **NoDerivatives:** If you remix, transform, or build upon the material, you may not distribute the modified material.
