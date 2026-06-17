@@ -1,35 +1,34 @@
-# My Roblox Script (Early Learning Project)  
-**รวมสคริปต์ช่วงเริ่มต้นเขียน Roblox ด้วยภาษา Lua**  
+# My Roblox Scripts
 
----
+A comprehensive collection of Lua scripts for Roblox, ranging from utility tools to advanced combat and farming automation. These scripts are intended for educational and personal use.
 
-## เกี่ยวกับโปรเจค (About the Project)  
-Repo นี้เก็บสคริปต์ที่ผมเคยเขียนไว้ตอนเริ่มเรียนรู้ **ภาษา Lua** และ **Roblox scripting**  
-โค้ดส่วนใหญ่เป็นการทดลองแบบลองผิดลองถูก และหลายส่วน **ผิดกฎของ Roblox**  
-แต่เลือกเก็บไว้บน GitHub เพื่อใช้เป็นหลักฐานการพัฒนาและการเรียนรู้ ไม่ได้ตั้งใจให้นำไปใช้งานจริง  
+## Repository Structure
 
-This repository contains my **early-stage experiments** with Lua and Roblox scripting.  
-Most of the scripts are against Roblox’s Terms of Service.  
-They are kept here **for learning history only**, not for practical use.  
+The scripts are organized into categories for easier navigation:
 
----
+*   **`combat/`**: Tools for combat enhancement, including Kill Aura (KA), TP Kill, Hitbox Expanders, and Aimbots.
+*   **`farming/`**: Automation for resource gathering, including Auto-Farm, Auto-Hatch, and Auto-Rebirth scripts.
+*   **`movement/`**: Scripts related to navigation and specialized movement systems.
+*   **`utility/`**: Essential tools such as Anti-AFK, Auto-Clickers, Auto-Rejoin, and ESP (Extra Sensory Perception).
+*   **`internal/`**: Configuration files and key management scripts.
+*   **`archive/`**: Legacy scripts and miscellaneous tools from previous projects.
 
-## สิ่งที่ได้เรียนรู้ (Learning Outcomes)  
-- เริ่มต้นกับ **Lua** (syntax, ฟังก์ชัน, ตัวแปร, loop)  
-- เข้าใจโครงสร้างการเขียนสคริปต์บน Roblox  
-- ฝึกใช้ **GitHub** เพื่อเก็บโค้ดและติดตามความก้าวหน้า  
+## How to Use
 
----
+1.  Ensure you have a compatible script executor.
+2.  Navigate to the category folder of the script you wish to use.
+3.  Copy the contents of the `.lua` file.
+4.  Execute the script within your chosen environment.
 
-## หมายเหตุ (Disclaimer)  
-- โค้ดทั้งหมดใน repo นี้ **ไม่ควรถูกนำไปใช้งานจริง**  
-- มีไว้เพื่อสะท้อน **กระบวนการเรียนรู้ช่วงเริ่มต้น** เท่านั้น  
-- จุดมุ่งหมายหลักคือการพัฒนาทักษะด้านการเขียนโปรแกรม ไม่ใช่การโกงเกม  
+## Disclaimer
 
-This repository is for **educational and portfolio purposes only**.  
-Not recommended for use in Roblox or any live environment.  
+These scripts are provided for educational purposes and personal use. Use them at your own risk. The author is not responsible for any account bans or consequences resulting from the use of these scripts. Always use scripts responsibly and respect the terms of service of the platform.
 
----
+## License
 
-## ผู้จัดทำ (Author)  
-- **BlamzKunG** 
+This repository is licensed under a strict **Personal and Non-Commercial Use License**. 
+*   **Non-Commercial:** You may not use these scripts for any commercial purposes or revenue generation.
+*   **Attribution:** Clear credit to the author (**BlamzKunG**) must be provided if these scripts are shared or modified.
+*   **No Warranty:** Provided "as is" without any guarantees.
+
+See the [LICENSE](LICENSE) file for full details.
